@@ -3,17 +3,14 @@
     <string name="title_activity_login">Se connecter</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">Nom d\'utilisateur</string>
     <string name="prompt_password">Mot de passe</string>
     <string name="action_sign_in">Se connecter</string>
     <string name="action_sign_in_short">Se connecter</string>
-    <string name="error_invalid_email">Cette adresse email est invalide</string>
+    <string name="error_incorrect_username">Ce nom d\'utilisateur est invalide</string>
     <string name="error_invalid_password">Le mot de passe est trop court</string>
     <string name="error_incorrect_password">Le mot de passe est incorrect</string>
     <string name="error_field_required">Le champ doit être complété</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="title_activity_navigation">NavigationActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

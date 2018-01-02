@@ -1,6 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -22,90 +23,76 @@ import javax.net.ssl.TrustManagerFactory;
  */
 
 public class WebService {
-    private final String URL_SO_MANAGER = "https://192.168.4.10/www/pfe/webservice.php";
+    private static final String URL_SO_MANAGER = "https://192.168.4.10/www/pfe/webservice.php";
 
     public WebService() {
 
     }
 
-    private InputStream sendRequest(URL url, Context context) throws Exception {
 
+    private static InputStream sendRequest(URL url, Context context) throws Exception {
+        // Load CAs from an InputStream
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+        InputStream caInput = new BufferedInputStream(context.getResources().openRawResource(R.raw.root));
+        Certificate ca;
         try {
-            // Load CAs from an InputStream
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            ca = cf.generateCertificate(caInput);
+        } finally {
+            caInput.close();
+        }
 
-            InputStream caInput = new BufferedInputStream(context.getResources().openRawResource(R.raw.root));
-            Certificate ca;
-            try {
-                ca = cf.generateCertificate(caInput);
-            } finally {
-                caInput.close();
-            }
+        // Create a KeyStore containing our trusted CAs
+        String keyStoreType = KeyStore.getDefaultType();
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
 
-            // Create a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
+        // Create a TrustManager that trusts the CAs in our KeyStore
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
 
-            // Create a TrustManager that trusts the CAs in our KeyStore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
+        // Create an SSLContext that uses our TrustManager
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
 
-            // Create an SSLContext that uses our TrustManager
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
+        // Open connection
+        HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+        urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
 
-            // Open connection
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            urlConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+        // Connect to url
+        urlConnection.connect();
 
-            // Connect to url
-            urlConnection.connect();
-
-            // If the server return with a HTTP 200
-            if (urlConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-                return urlConnection.getInputStream();
-            }
-        } catch (Exception e) {
-            throw new Exception("");
+        // If the server return with a HTTP 200
+        if (urlConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
+            return urlConnection.getInputStream();
         }
         return null;
     }
 
-    public InputStream getResponse(Context context, String username, String password) {
-
+    public static InputStream logon(Context context, String userName, String password) {
         try {
 
-            // Envoi de la requête
-            InputStream inputStream = sendRequest(new URL(URL_SO_MANAGER + "?q=LOGON&user=" + username + "&pass=" + password), context);
-
-            // Vérification de l'inputStream
-            if (inputStream != null) {
-                return inputStream;
-            }
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=LOGON&user=" + userName + "&pass=" + password), context);
 
         } catch (Exception e) {
-            Log.e("WebService", "Impossible de rapatrier les données");
+            Log.e("WebService", "LOGON error");
+            e.printStackTrace();
         }
         return null;
     }
 
-    public InputStream logon(Context context, String username, String password) {
-
+    public static InputStream liprj(Context context, String userName, String token) {
         try {
 
-            // Envoi de la requête
-            InputStream inputStream = sendRequest(new URL(URL_SO_MANAGER + "?q=LOGON&user=" + username + "&pass=" + password), context);
-
-            // Vérification de l'inputStream
-            if (inputStream != null) {
-                return inputStream;
-            }
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=LIPRJ&user=" + userName + "&token=" + token), context);
 
         } catch (Exception e) {
-            Log.e("WebService", "Impossible de rapatrier les données");
+            Log.e("WebService", "LIPRJ error");
+            e.printStackTrace();
         }
         return null;
     }

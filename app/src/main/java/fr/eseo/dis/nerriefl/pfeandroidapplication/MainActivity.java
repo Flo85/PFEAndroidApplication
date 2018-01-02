@@ -15,11 +15,13 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOGIN = "Login";
     private static final String PASSWORD = "Password";
+    private static final String TOKEN = "Token";
     private static final int MODIFY_NAME_RESULT_CODE = 0;
 
     Button connect;
@@ -35,17 +37,41 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("Main", "Début de MainActivity");
+        Log.d("MainActivity", "Début de MainActivity");
 
         Toast.makeText(getApplicationContext(), "Connexion réussi", Toast.LENGTH_SHORT).show();
 
         login = findViewById(R.id.login);
         password = findViewById(R.id.password);
 
-        login.setText("Votre email est : " + getIntent().getExtras().getString(LOGIN));
+        /*login.setText("Votre email est : " + getIntent().getExtras().getString(LOGIN));
         login.setVisibility(View.VISIBLE);
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
-        password.setVisibility(View.VISIBLE);
+        password.setVisibility(View.VISIBLE);*/
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        InputStream inputStream = WebService.liprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
+
+        HashMap<String, Object> response = null;
+
+        if (inputStream != null) {
+            try {
+                response = JSONReader.read(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                List<Project> projects = (List) response.get("projects");
+                Log.d("MainActivity", "" + projects.size());
+                for (int i = 0; i < projects.size(); i++) {
+                    Log.d("MainActivity", projects.get(i).getTitle());
+                }
+            }
+        }
 
         /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);

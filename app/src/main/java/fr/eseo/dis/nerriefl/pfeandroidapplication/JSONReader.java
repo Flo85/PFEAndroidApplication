@@ -1,7 +1,6 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
-import android.media.session.MediaSession;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,7 +8,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Flo on 20/12/2017.
@@ -17,12 +19,12 @@ import java.util.HashMap;
 
 public class JSONReader {
 
-    private static HashMap<String, String> result;
+    private static HashMap<String, Object> result;
 
-    public static HashMap<String, String> read(InputStream inputStream) throws IOException, JSONException {
+    public static HashMap<String, Object> read(InputStream inputStream) throws IOException, JSONException {
         JSONObject reader = new JSONObject(convertStreamToString(inputStream));
 
-        result = new HashMap<String, String>();
+        result = new HashMap<String, Object>();
         result.put("result", reader.getString("result"));
         result.put("api", reader.getString("api"));
 
@@ -34,8 +36,10 @@ public class JSONReader {
                 case "LOGON":
                     readLogon(reader);
                     return result;
+                case "LIPRJ":
+                    readLiprj(reader);
+                    return result;
                 default:
-                    break;
             }
         }
 
@@ -44,6 +48,35 @@ public class JSONReader {
 
     private static void readLogon(JSONObject reader) throws JSONException {
         result.put("token", reader.getString("token"));
+    }
+
+    private static void readLiprj(JSONObject reader) throws JSONException {
+        List<Project> projects = new ArrayList<>();
+        JSONArray liprj = reader.getJSONArray("projects");
+        for (int i = 0; i < liprj.length(); i++) {
+            Project project = new Project();
+            JSONObject prj = liprj.getJSONObject(i);
+
+            project.setId(prj.getInt("projectId"));
+            project.setTitle(prj.getString("title"));
+            project.setDescription(prj.getString("descrip"));
+            project.setPosterCommited(prj.getBoolean("poster"));
+            project.setConfidentiality(prj.getInt("confid"));
+
+            JSONObject supervisor = prj.getJSONObject("supervisor");
+            project.setSupervisor(new User(supervisor.getString("forename"), supervisor.getString("surname")));
+
+            JSONArray students = prj.getJSONArray("students");
+            for (int j = 0; j < students.length(); j++) {
+                JSONObject student = students.getJSONObject(j);
+
+                project.addStudent(new User(student.getInt("userId"), student.getString("forename"), student.getString("surname")));
+            }
+
+            projects.add(project);
+        }
+
+        result.put("projects", projects);
     }
 
     private static String convertStreamToString(InputStream is) {
