@@ -70,30 +70,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         login.setVisibility(View.VISIBLE);
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
-
-        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        InputStream inputStream = WebService.liprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
-
-        HashMap<String, Object> response = null;
-
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Project> projects = (List) response.get("projects");
-                Log.d("MainActivity", "" + projects.size());
-                for (int i = 0; i < projects.size(); i++) {
-                    Log.d("MainActivity", projects.get(i).getTitle());
-                }
-            }
-        }*/
     }
 
     @Override
@@ -135,18 +111,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //initializing the fragment object which is selected
         switch (itemId) {
-            case R.id.nav_camera:
-                fragment = new Home();
-                break;
-            case R.id.nav_slideshow:
+            case R.id.nav_jurys:
 
                 break;
-            case R.id.nav_manage:
+            case R.id.nav_projets:
+                fragment = new ListProjects();
+                break;
+            case R.id.nav_eleves:
 
                 break;
-            case R.id.nav_send:
+            case R.id.nav_notifications:
 
                 break;
+            default:
+                fragment =new Home();
         }
 
         Log.d("MainActivity","" + fragment);
