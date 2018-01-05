@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -66,6 +67,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
         Log.d("Login", "Début de LoginActivity");
         // Set up the login form.
         userNameView = findViewById(R.id.user_name);
@@ -96,6 +99,13 @@ public class LoginActivity extends AppCompatActivity {
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //ajoute les entrées de menu_test à l'ActionBar
+        getMenuInflater().inflate(R.menu.navigation, menu);
+        return true;
     }
 
     /*private void populateAutoComplete() {

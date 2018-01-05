@@ -1,12 +1,22 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.os.StrictMode;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +27,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOGIN = "Login";
     private static final String PASSWORD = "Password";
@@ -35,21 +45,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_navigation);
 
-        Log.d("MainActivity", "Début de MainActivity");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        Toast.makeText(getApplicationContext(), "Connexion réussi", Toast.LENGTH_SHORT).show();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        login = findViewById(R.id.login);
-        password = findViewById(R.id.password);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        displaySelectedScreen(R.id.nav_camera);
+
+        //Toast.makeText(getApplicationContext(), "Connexion réussi", Toast.LENGTH_SHORT).show();
+
+        //login = findViewById(R.id.login);
+        //password = findViewById(R.id.password);
 
         /*login.setText("Votre email est : " + getIntent().getExtras().getString(LOGIN));
         login.setVisibility(View.VISIBLE);
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         InputStream inputStream = WebService.liprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
@@ -71,55 +93,79 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity", projects.get(i).getTitle());
                 }
             }
+        }*/
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.navigation, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
 
-        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        return super.onOptionsItemSelected(item);
+    }
 
-        WebService webService = new WebService();
-        InputStream inputStream = webService.getResponse(this, "chauvnat", "NoY3xNno7QZn");
+    private void displaySelectedScreen(int itemId) {
 
-        if (inputStream != null) {
-            password.setText("Ok");
-            HashMap<String, String> response = null;
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "LOGON".equals(response.get("api"))) {
-                password.setText(response.get("token"));
-            }
-        } else {
-            password.setText("Fail");
-        }*/
+        //creating fragment object
+        Fragment fragment = null;
 
-        /*connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (loginText.getText().toString().equals("admin") &&
-                        passwordText.getText().toString().equals("admin")) {
-                    Toast.makeText(getApplicationContext(),
-                            "Redirecting...", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    intent.putExtra(LOGIN, loginText.getText().toString());
-                    intent.putExtra(PASSWORD, passwordText.getText().toString());
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Wrong Credentials", Toast.LENGTH_SHORT).show();
+        //initializing the fragment object which is selected
+        switch (itemId) {
+            case R.id.nav_camera:
+                fragment = new Home();
+                break;
+            case R.id.nav_slideshow:
 
-                    tx1.setVisibility(View.VISIBLE);
-                    tx1.setBackgroundColor(Color.RED);
-                    counter--;
-                    tx1.setText(Integer.toString(counter));
+                break;
+            case R.id.nav_manage:
 
-                    if (counter == 0) {
-                        connect.setEnabled(false);
-                    }
-                }
-            }
-        });*/
+                break;
+            case R.id.nav_send:
+
+                break;
+        }
+
+        Log.d("MainActivity","" + fragment);
+
+        //replacing the fragment
+        if (fragment != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.content_frame, fragment);
+            fragmentTransaction.commit();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        displaySelectedScreen(item.getItemId());
+        return true;
     }
 }
