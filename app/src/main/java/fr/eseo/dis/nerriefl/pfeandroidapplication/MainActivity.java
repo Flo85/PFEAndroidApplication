@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
 
-        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Log.d("MainActivity", "Lecture tous les projets");
-        InputStream inputStream = WebService.liprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
+        Log.d("MainActivity", "Début lecture");
+        InputStream inputStream = WebService.lijur(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {
@@ -117,36 +117,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Project> projects = (List) response.get("projects");
-                Log.d("MainActivity", "Tous les projets : " + projects.size());
-                for (int i = 0; i < projects.size(); i++) {
-                    Log.d("MainActivity", projects.get(i).getTitle());
+            if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                List<Jury> juries = (List) response.get("juries");
+                Log.d("MainActivity", "Tous les jurys : " + juries.size());
+                for (int i = 0; i < juries.size(); i++) {
+                    Log.d("MainActivity", "" + juries.get(i).getId());
                 }
             }
         }
-        Log.d("MainActivity", "Fin lecture tous les projets");
-
-        Log.d("MainActivity", "Lecture mes projets");
-        inputStream = WebService.myprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
-        response = null;
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Project> projects = (List) response.get("projects");
-                Log.d("MainActivity", "Mes projets : " + projects.size());
-                for (int i = 0; i < projects.size(); i++) {
-                    Log.d("MainActivity", projects.get(i).getTitle());
-                }
-            }
-        }
-        Log.d("MainActivity", "Fin lecture mes projets");*/
+        Log.d("MainActivity", "Fin lecture");
     }
 
     @Override

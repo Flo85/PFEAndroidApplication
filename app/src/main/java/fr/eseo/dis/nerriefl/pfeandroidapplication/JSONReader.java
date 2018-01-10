@@ -42,6 +42,9 @@ public class JSONReader {
                 case "MYPRJ":
                     readLiprjMyprj(reader);
                     return result;
+                case "LIJUR":
+                    readLijur(reader);
+                    return result;
                 default:
             }
         }
@@ -54,7 +57,7 @@ public class JSONReader {
     }
 
     private static void readLiprjMyprj(JSONObject reader) throws JSONException {
-        List<Project> projects = new ArrayList<>();
+        List<Project> projects = new ArrayList<Project>();
         JSONArray liprj = reader.getJSONArray("projects");
         for (int i = 0; i < liprj.length(); i++) {
             Project project = new Project();
@@ -78,8 +81,39 @@ public class JSONReader {
 
             projects.add(project);
         }
-
         result.put("projects", projects);
+    }
+
+    private static void readLijur(JSONObject reader) throws JSONException {
+        List<Jury> juries = new ArrayList<Jury>();
+        JSONArray lijur = reader.getJSONArray("juries");
+        for (int i = 0; i < lijur.length(); i++) {
+            Jury jury = new Jury();
+            JSONObject jur = lijur.getJSONObject(i);
+
+            jury.setId(jur.getInt("idJury"));
+            jury.setDate(jur.getString("date"));
+
+            JSONArray projects = jur.getJSONObject("info").getJSONArray("projects");
+            for (int j = 0; j < projects.length(); j++) {
+                JSONObject project = projects.getJSONObject(j);
+                Project prj = new Project();
+
+                prj.setId(project.getInt("projectId"));
+                prj.setTitle(project.getString("title"));
+                prj.setPosterCommited(project.getBoolean("poster"));
+                prj.setConfidentiality(project.getInt("confid"));
+
+                JSONObject supervisor = project.getJSONObject("supervisor");
+                prj.setSupervisor(new User(supervisor.getString("forename"), supervisor.getString("surname")));
+
+                jury.addProject(prj);
+            }
+
+            juries.add(jury);
+        }
+
+        result.put("juries", juries);
     }
 
     private static String convertStreamToString(InputStream is) {

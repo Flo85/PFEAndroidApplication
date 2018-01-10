@@ -67,12 +67,10 @@ public class ListMyProjects extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Log.d("ListMyProjects", "Lecture des mes projets");
         InputStream inputStream = WebService.myprj(this.getContext(), ((MainActivity) getActivity()).getLogin(),
                 ((MainActivity) getActivity()).getToken());
         HashMap<String, Object> response = null;
         if (inputStream != null) {
-            Log.d("ListMyProjects", "inputStream != null");
             try {
                 response = JSONReader.read(inputStream);
             } catch (IOException e) {
@@ -81,8 +79,7 @@ public class ListMyProjects extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                Log.d("ListMyProjects", "response != null");
-                List<Project> projects = (List) response.get("myprojects");
+                List<Project> projects = (List) response.get("projects");
 
                 List<HashMap<String,String>> listItem = new ArrayList<HashMap<String, String>>();
                 HashMap<String, String> item;
@@ -92,16 +89,11 @@ public class ListMyProjects extends Fragment {
                     item.put("project_title", project.getTitle());
                     listItem.add(item);
                 }
-                Log.d("ListMyProjects", "Lecture de mes projets : " + projects.size());
-                for (int i = 0; i < projects.size(); i++) {
-                    Log.d("ListMyProjects", projects.get(i).getTitle());
-                }
                 listViewMyProjects = view.findViewById(R.id.list_my_projects);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
                 listViewMyProjects.setAdapter(simpleAdapter);
             }
-            Log.d("ListMyProjects", "Fin lecture de mes projets");
         }
     }
 }

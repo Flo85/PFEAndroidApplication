@@ -54,8 +54,8 @@ public class LoginActivity extends AppCompatActivity {
     private View loginFormView;
 
     /* For test */
-    private String name = "alberpat";
-    private String pass = "w872o32HkYAO";
+    private String name = "delatjer";
+    private String pass = "zwXaQZDlAzPc";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
