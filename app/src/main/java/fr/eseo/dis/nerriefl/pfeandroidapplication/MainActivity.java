@@ -34,18 +34,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TOKEN = "Token";
     private static final int MODIFY_NAME_RESULT_CODE = 0;
 
-    Button connect;
-    Button close;
-    EditText loginText;
-    EditText passwordText;
+    private Button connect;
+    private Button close;
+    private EditText loginText;
+    private EditText passwordText;
 
-    TextView login;
-    TextView password;
+    private TextView viewLogin;
+    private TextView viewPassword;
+
+    private String login;
+    private String password;
+    private String token;
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        login = getIntent().getExtras().getString(LOGIN);
+        password = getIntent().getExtras().getString(PASSWORD);
+        token = getIntent().getExtras().getString(TOKEN);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         Log.d("MainActivity", "Lecture tous les projets");
@@ -114,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         }
-        Log.d("MainActivity", "Fin lecture mes projets");
+        Log.d("MainActivity", "Fin lecture mes projets");*/
     }
 
     @Override

@@ -65,14 +65,16 @@ public class ListProjects extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Projets");
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.liprj(this.getContext(), login, token);
-
+        Log.d("ListProjects", "Lecture tous les projets");
+        InputStream inputStream = WebService.liprj(this.getContext(), ((MainActivity) getActivity()).getLogin(),
+                ((MainActivity) getActivity()).getToken());
         HashMap<String, Object> response = null;
-
         if (inputStream != null) {
+            Log.d("ListProjects", "inputStream != null");
             try {
                 response = JSONReader.read(inputStream);
             } catch (IOException e) {
@@ -81,6 +83,7 @@ public class ListProjects extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                Log.d("ListProjects", "response != null");
                 List<Project> projects = (List) response.get("projects");
 
                 List<HashMap<String,String>> listItem = new ArrayList<HashMap<String, String>>();
@@ -88,16 +91,19 @@ public class ListProjects extends Fragment {
 
                 for(Project project : projects){
                     item = new HashMap<>();
-                    item.put("project_title",project.getTitle());
+                    item.put("project_title", project.getTitle());
                     listItem.add(item);
                 }
-                listViewProjects.findViewById(R.id.list_projects);
-                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity().getBaseContext(),listItem,R.layout.view_project,
+                Log.d("ListProjects", "Tous les projets : " + projects.size());
+                for (int i = 0; i < projects.size(); i++) {
+                    Log.d("ListProjects", projects.get(i).getTitle());
+                }
+                listViewProjects = view.findViewById(R.id.list_projects);
+                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
                 listViewProjects.setAdapter(simpleAdapter);
-
-
             }
+            Log.d("ListProjects", "Fin lecture tous les projets");
         }
     }
 }
