@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         StrictMode.setThreadPolicy(policy);
 
         Log.d("MainActivity", "Début lecture");
-        InputStream inputStream = WebService.lijur(this, login, token);
+        InputStream inputStream = WebService.myjur(this, login, token);
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {
@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+            if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
                 List<Jury> juries = (List) response.get("juries");
-                Log.d("MainActivity", "Tous les jurys : " + juries.size());
+                Log.d("MainActivity", "Mes jurys : " + juries.size());
                 for (int i = 0; i < juries.size(); i++) {
                     Log.d("MainActivity", "" + juries.get(i).getId());
                 }
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new ListMyProjects();
                 break;
             case R.id.nav_jurys:
-
+                fragment = new ListJurys();
                 break;
             case R.id.nav_projets:
                 fragment = new ListProjects();

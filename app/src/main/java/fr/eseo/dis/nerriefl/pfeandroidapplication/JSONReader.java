@@ -43,7 +43,10 @@ public class JSONReader {
                     readLiprjMyprj(reader);
                     return result;
                 case "LIJUR":
-                    readLijur(reader);
+                    readLijurMyjur(reader);
+                    return result;
+                case "MYJUR":
+                    readLijurMyjur(reader);
                     return result;
                 default:
             }
@@ -84,7 +87,7 @@ public class JSONReader {
         result.put("projects", projects);
     }
 
-    private static void readLijur(JSONObject reader) throws JSONException {
+    private static void readLijurMyjur(JSONObject reader) throws JSONException {
         List<Jury> juries = new ArrayList<Jury>();
         JSONArray lijur = reader.getJSONArray("juries");
         for (int i = 0; i < lijur.length(); i++) {

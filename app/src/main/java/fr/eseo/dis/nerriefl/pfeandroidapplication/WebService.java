@@ -121,4 +121,17 @@ public class WebService {
         }
         return null;
     }
+
+    public static InputStream myjur(Context context, String userName, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=MYJUR&user=" + userName + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "LIJUR error");
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
