@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         StrictMode.setThreadPolicy(policy);
 
         Log.d("MainActivity", "Début lecture");
-        InputStream inputStream = WebService.lijur(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
+        InputStream inputStream = WebService.lijur(this, login, token);
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {

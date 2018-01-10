@@ -3,9 +3,7 @@ package fr.eseo.dis.nerriefl.pfeandroidapplication;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,27 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListMyProjects extends Fragment {
-    private String login;
-    private String token;
     private ListView listViewMyProjects;
 
     public ListMyProjects (){
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public ListView getListViewProjects() {
