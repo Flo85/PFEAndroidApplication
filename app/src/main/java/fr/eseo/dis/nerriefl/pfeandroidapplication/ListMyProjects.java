@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,15 +62,17 @@ public class ListMyProjects extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Mes Projets");
+        getActivity().setTitle(" Mes Projets");
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.myprj(this.getContext(), login, token);
-
+        Log.d("ListMyProjects", "Lecture des mes projets");
+        InputStream inputStream = WebService.myprj(this.getContext(), ((MainActivity) getActivity()).getLogin(),
+                ((MainActivity) getActivity()).getToken());
         HashMap<String, Object> response = null;
-
         if (inputStream != null) {
+            Log.d("ListMyProjects", "inputStream != null");
             try {
                 response = JSONReader.read(inputStream);
             } catch (IOException e) {
@@ -78,23 +81,27 @@ public class ListMyProjects extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Project> projects = (List) response.get("projects");
+                Log.d("ListMyProjects", "response != null");
+                List<Project> projects = (List) response.get("myprojects");
 
                 List<HashMap<String,String>> listItem = new ArrayList<HashMap<String, String>>();
                 HashMap<String, String> item;
 
                 for(Project project : projects){
                     item = new HashMap<>();
-                    item.put("project_title",project.getTitle());
+                    item.put("project_title", project.getTitle());
                     listItem.add(item);
                 }
-                listViewMyProjects.findViewById(R.id.list_projects);
-                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity().getBaseContext(),listItem,R.layout.view_project,
+                Log.d("ListMyProjects", "Lecture de mes projets : " + projects.size());
+                for (int i = 0; i < projects.size(); i++) {
+                    Log.d("ListMyProjects", projects.get(i).getTitle());
+                }
+                listViewMyProjects = view.findViewById(R.id.list_my_projects);
+                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
                 listViewMyProjects.setAdapter(simpleAdapter);
-
-
             }
+            Log.d("ListMyProjects", "Fin lecture de mes projets");
         }
     }
 }

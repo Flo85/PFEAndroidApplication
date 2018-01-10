@@ -188,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //initializing the fragment object which is selected
         switch (itemId) {
+            case R.id.nav_my_projets:
+                fragment = new ListMyProjects();
+                break;
             case R.id.nav_jurys:
 
                 break;
