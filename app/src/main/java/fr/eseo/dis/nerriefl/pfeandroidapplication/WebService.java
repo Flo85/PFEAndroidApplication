@@ -29,7 +29,6 @@ public class WebService {
 
     }
 
-
     private static InputStream sendRequest(URL url, Context context) throws Exception {
         // Load CAs from an InputStream
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -92,6 +91,19 @@ public class WebService {
 
         } catch (Exception e) {
             Log.e("WebService", "LIPRJ error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream myprj(Context context, String userName, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=MYPRJ&user=" + userName + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "MYPRJ error");
             e.printStackTrace();
         }
         return null;

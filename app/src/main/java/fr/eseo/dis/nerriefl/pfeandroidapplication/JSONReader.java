@@ -37,7 +37,10 @@ public class JSONReader {
                     readLogon(reader);
                     return result;
                 case "LIPRJ":
-                    readLiprj(reader);
+                    readLiprjMyprj(reader);
+                    return result;
+                case "MYPRJ":
+                    readLiprjMyprj(reader);
                     return result;
                 default:
             }
@@ -50,7 +53,7 @@ public class JSONReader {
         result.put("token", reader.getString("token"));
     }
 
-    private static void readLiprj(JSONObject reader) throws JSONException {
+    private static void readLiprjMyprj(JSONObject reader) throws JSONException {
         List<Project> projects = new ArrayList<>();
         JSONArray liprj = reader.getJSONArray("projects");
         for (int i = 0; i < liprj.length(); i++) {

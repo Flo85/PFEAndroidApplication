@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        displaySelectedScreen(R.id.nav_camera);
+        displaySelectedScreen(0);
 
         //Toast.makeText(getApplicationContext(), "Connexion réussi", Toast.LENGTH_SHORT).show();
 
@@ -70,6 +70,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         login.setVisibility(View.VISIBLE);
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        Log.d("MainActivity", "Lecture tous les projets");
+        InputStream inputStream = WebService.liprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
+        HashMap<String, Object> response = null;
+        if (inputStream != null) {
+            try {
+                response = JSONReader.read(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                List<Project> projects = (List) response.get("projects");
+                Log.d("MainActivity", "Tous les projets : " + projects.size());
+                for (int i = 0; i < projects.size(); i++) {
+                    Log.d("MainActivity", projects.get(i).getTitle());
+                }
+            }
+        }
+        Log.d("MainActivity", "Fin lecture tous les projets");
+
+        Log.d("MainActivity", "Lecture mes projets");
+        inputStream = WebService.myprj(this, getIntent().getExtras().getString(LOGIN), getIntent().getExtras().getString(TOKEN));
+        response = null;
+        if (inputStream != null) {
+            try {
+                response = JSONReader.read(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                List<Project> projects = (List) response.get("projects");
+                Log.d("MainActivity", "Mes projets : " + projects.size());
+                for (int i = 0; i < projects.size(); i++) {
+                    Log.d("MainActivity", projects.get(i).getTitle());
+                }
+            }
+        }
+        Log.d("MainActivity", "Fin lecture mes projets");
     }
 
     @Override
@@ -124,10 +169,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 break;
             default:
-                fragment =new Home();
+                fragment = new Home();
         }
 
-        Log.d("MainActivity","" + fragment);
+        Log.d("MainActivity","Fragment : " + fragment);
 
         //replacing the fragment
         if (fragment != null) {

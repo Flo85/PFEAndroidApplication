@@ -43,13 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -60,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private View progressView;
     private View loginFormView;
 
+    /* For test */
     private String name = "alberpat";
     private String pass = "w872o32HkYAO";
 
@@ -314,8 +308,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
@@ -333,12 +325,8 @@ public class LoginActivity extends AppCompatActivity {
                     return "OK".equals(response.get("result"));
                 }
                 return false;
-            } else {
-                return false;
             }
-
-            // TODO: register the new account here.
-            //return true;
+            return false;
         }
 
         @Override
@@ -350,7 +338,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra(LOGIN, userName);
                 intent.putExtra(PASSWORD, password);
-
                 intent.putExtra(TOKEN, (String) response.get("token"));
                 startActivity(intent);
             } else {
