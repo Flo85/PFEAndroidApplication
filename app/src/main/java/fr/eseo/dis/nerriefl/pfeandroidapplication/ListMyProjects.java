@@ -1,12 +1,10 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
-import android.content.Context;
-import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +19,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ListProjects extends Fragment {
-
+public class ListMyProjects extends Fragment {
     private String login;
     private String token;
     private ListView listViewProjects;
 
-    public ListProjects (){
+    public ListMyProjects (){
     }
 
     public String getLogin() {
@@ -57,14 +54,14 @@ public class ListProjects extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_list_projects, container, false);
+        return inflater.inflate(R.layout.activity_list_my_projects, container, false);
     }
 
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Projets");
+        getActivity().setTitle("Mes Projets");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -91,12 +88,9 @@ public class ListProjects extends Fragment {
                     item.put("project_title",project.getTitle());
                     listItem.add(item);
                 }
-                listViewProjects.findViewById(R.id.list_projects);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity().getBaseContext(),listItem,R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
                 listViewProjects.setAdapter(simpleAdapter);
-
-
             }
         }
     }
