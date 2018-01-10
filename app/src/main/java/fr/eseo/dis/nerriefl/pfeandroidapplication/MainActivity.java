@@ -1,5 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,29 +106,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
         password.setVisibility(View.VISIBLE);*/
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         Log.d("MainActivity", "Début lecture");
-        InputStream inputStream = WebService.myjur(this, login, token);
+        InputStream inputStream = WebService.jyinf(this, login, 2, token);
         HashMap<String, Object> response = null;
         if (inputStream != null) {
+            Log.d("MainActivity", "inputStream != null");
             try {
                 response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
-            if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Jury> juries = (List) response.get("juries");
-                Log.d("MainActivity", "Mes jurys : " + juries.size());
-                for (int i = 0; i < juries.size(); i++) {
-                    Log.d("MainActivity", "" + juries.get(i).getId());
+            Log.d("MainActivity", "response : " + response);
+            if(response != null) {
+                Log.d("MainActivity", "response result : " + response.get("result"));
+                Log.d("MainActivity", "response api : " + response.get("api"));
+            }
+            if (response != null && "JYINF".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                Log.d("MainActivity", "response != null");
+                List<Project> list = (List) response.get("projects");
+                Log.d("MainActivity", "Projet du jury 2 : " + list.size());
+                for (int i = 0; i < list.size(); i++) {
+                    Log.d("MainActivity", "" + list.get(i).getTitle());
                 }
             }
         }
-        Log.d("MainActivity", "Fin lecture");
+
+        Log.d("MainActivity", "Fin lecture");*/
     }
 
     @Override

@@ -10,10 +10,12 @@ import java.util.List;
 public class Jury {
     private int id;
     private String date;
+    private List<User> members;
     private List<Project> projects;
 
     // Constructors
     public Jury() {
+        this.members = new ArrayList<User>();
         this.projects = new ArrayList<Project>();
     }
 
@@ -22,9 +24,10 @@ public class Jury {
         this.id = id;
     }
 
-    public Jury(int id, String date, List<Project> projects) {
+    public Jury(int id, String date, List<User> members, List<Project> projects) {
         this(id);
         this.date = date;
+        this.members = members;
         this.projects = projects;
     }
 
@@ -45,6 +48,14 @@ public class Jury {
         this.date = date;
     }
 
+    public List<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<User> members) {
+        this.members = members;
+    }
+
     public List<Project> getProjects() {
         return projects;
     }
@@ -53,7 +64,11 @@ public class Jury {
         this.projects = projects;
     }
 
-    // Method
+    // Methods
+    public void addMember(User member) {
+        members.add(member);
+    }
+
     public void addProject(Project project) {
         projects.add(project);
     }

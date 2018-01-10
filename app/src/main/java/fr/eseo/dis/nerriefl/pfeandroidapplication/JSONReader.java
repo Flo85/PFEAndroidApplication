@@ -1,5 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,10 +39,10 @@ public class JSONReader {
                     readLogon(reader);
                     return result;
                 case "LIPRJ":
-                    readLiprjMyprj(reader);
+                    readLiprjMyprjJyinf(reader);
                     return result;
                 case "MYPRJ":
-                    readLiprjMyprj(reader);
+                    readLiprjMyprjJyinf(reader);
                     return result;
                 case "LIJUR":
                     readLijurMyjur(reader);
@@ -48,18 +50,27 @@ public class JSONReader {
                 case "MYJUR":
                     readLijurMyjur(reader);
                     return result;
-                default:
+                case "JYINF":
+                    readLiprjMyprjJyinf(reader);
+                    return result;
+                case "NOTES":
+                    readNotes(reader);
+                    return result;
+                case "NEWNT":
+                    return result;
+                case "PORTE":
+                    readPorte(reader);
+                    return result;
             }
+            return null;
         }
-
-        return null;
     }
 
     private static void readLogon(JSONObject reader) throws JSONException {
         result.put("token", reader.getString("token"));
     }
 
-    private static void readLiprjMyprj(JSONObject reader) throws JSONException {
+    private static void readLiprjMyprjJyinf(JSONObject reader) throws JSONException {
         List<Project> projects = new ArrayList<Project>();
         JSONArray liprj = reader.getJSONArray("projects");
         for (int i = 0; i < liprj.length(); i++) {
@@ -97,7 +108,14 @@ public class JSONReader {
             jury.setId(jur.getInt("idJury"));
             jury.setDate(jur.getString("date"));
 
-            JSONArray projects = jur.getJSONObject("info").getJSONArray("projects");
+            JSONObject info = jur.getJSONObject("info");
+            JSONArray members = info.getJSONArray("members");
+            for(int j = 0; j < members.length(); j++){
+                JSONObject member = members.getJSONObject(j);
+                jury.addMember(new User(member.getString("forename"), member.getString("surname")));
+            }
+
+            JSONArray projects = info.getJSONArray("projects");
             for (int j = 0; j < projects.length(); j++) {
                 JSONObject project = projects.getJSONObject(j);
                 Project prj = new Project();
@@ -115,8 +133,49 @@ public class JSONReader {
 
             juries.add(jury);
         }
-
         result.put("juries", juries);
+    }
+
+    private static void readNotes(JSONObject reader) throws JSONException {
+        List<Note> notes = new ArrayList<Note>();
+        JSONArray linotes = reader.getJSONArray("notes");
+        for (int i = 0; i < linotes.length(); i++) {
+            Note note = new Note();
+            JSONObject notation = linotes.getJSONObject(i);
+
+            note.setUser(new User(notation.getInt("userId"), notation.getString("forename"), notation.getString("surname")));
+            if(notation.get("mynote") instanceof Double){
+                note.setMyNote(notation.getDouble("mynote"));
+            } else if(notation.get("mynote") instanceof Long) {
+                note.setMyNote(notation.getLong("mynote"));
+            }
+            if(notation.get("avgnote") instanceof Double){
+                note.setMyNote(notation.getDouble("avgnote"));
+            } else if(notation.get("avgnote") instanceof Long) {
+                note.setMyNote(notation.getLong("avgnote"));
+            }
+
+            notes.add(note);
+        }
+        result.put("notes", notes);
+    }
+
+    private static void readPorte(JSONObject reader) throws JSONException {
+        List<Project> projects = new ArrayList<Project>();
+        JSONArray liprj = reader.getJSONArray("projects");
+        for (int i = 0; i < liprj.length(); i++) {
+            Project project = new Project();
+            JSONObject prj = liprj.getJSONObject(i);
+
+            project.setId(prj.getInt("idProject"));
+            project.setTitle(prj.getString("title"));
+            project.setDescription(prj.getString("description"));
+            project.setPoster(prj.getString("poster"));
+
+            projects.add(project);
+        }
+        result.put("seed", reader.getInt("seed"));
+        result.put("projects", projects);
     }
 
     private static String convertStreamToString(InputStream is) {

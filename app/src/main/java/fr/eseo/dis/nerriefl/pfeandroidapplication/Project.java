@@ -16,6 +16,7 @@ public class Project {
 
     private User supervisor;
     private List<User> students;
+    private String poster;
 
     // Constructors
     public Project() {
@@ -90,6 +91,14 @@ public class Project {
 
     public void setStudents(List<User> students) {
         this.students = students;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
 
     // Method

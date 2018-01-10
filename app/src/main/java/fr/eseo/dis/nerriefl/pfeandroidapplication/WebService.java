@@ -129,7 +129,93 @@ public class WebService {
             return sendRequest(new URL(URL_SO_MANAGER + "?q=MYJUR&user=" + userName + "&token=" + token), context);
 
         } catch (Exception e) {
-            Log.e("WebService", "LIJUR error");
+            Log.e("WebService", "MYJUR error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream jyinf(Context context, String userName, int juryId, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=JYINF&user=" + userName + "&jury=" + juryId + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "JYINF error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream postr(Context context, String userName, int projectId, String token) {
+        return postr(context, userName, projectId, "FULL", token);
+    }
+
+    public static InputStream postr(Context context, String userName, int projectId, String style, String token) {
+        try {
+
+            // Send request
+            if("FULL".equals(style) ||"THUMB".equals(style) || "FLB64".equals(style) || "THB64".equals(style)){
+                return sendRequest(new URL(URL_SO_MANAGER + "?q=POSTR&user=" + userName + "&proj=" + projectId + "&style" + style
+                        + "&token=" + token), context);
+            }
+
+        } catch (Exception e) {
+            Log.e("WebService", "POSTR error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream notes(Context context, String userName, int projectId, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=NOTES&user=" + userName + "&proj=" + projectId + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "NOTES error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream newnt(Context context, String userName, int projectId, int studentId, double note, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=NEWNT&user=" + userName + "&proj=" + projectId + "&student=" + studentId
+                    + "&note=" + note + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "NEWNT error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream porte(Context context, String userName, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=PORTE&user=" + userName + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "PORTE error");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static InputStream porte(Context context, String userName, int seed, String token) {
+        try {
+
+            // Send request
+            return sendRequest(new URL(URL_SO_MANAGER + "?q=PORTE&user=" + userName + "&seed=" + seed + "&token=" + token), context);
+
+        } catch (Exception e) {
+            Log.e("WebService", "PORTE error");
             e.printStackTrace();
         }
         return null;
