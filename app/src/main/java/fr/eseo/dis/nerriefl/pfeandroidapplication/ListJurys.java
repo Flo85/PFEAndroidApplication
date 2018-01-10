@@ -36,7 +36,7 @@ public class ListJurys extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_list_jurys, container, false);
+        return inflater.inflate(R.layout.activity_list, container, false);
     }
 
 
@@ -70,7 +70,7 @@ public class ListJurys extends Fragment {
                     item.put("jury_id", jury.getId());
                     listItem.add(item);
                 }
-                listViewJurys = view.findViewById(R.id.list_jurys);
+                listViewJurys = view.findViewById(R.id.list);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_jury,
                         new String[]{"jury_id"}, new int[]{R.id.jury_id});
                 listViewJurys.setAdapter(simpleAdapter);

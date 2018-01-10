@@ -35,7 +35,7 @@ public class ListProjects extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_list_projects, container, false);
+        return inflater.inflate(R.layout.activity_list, container, false);
     }
 
 
@@ -69,7 +69,7 @@ public class ListProjects extends Fragment {
                     item.put("project_title", project.getTitle());
                     listItem.add(item);
                 }
-                listViewProjects = view.findViewById(R.id.list_projects);
+                listViewProjects = view.findViewById(R.id.list);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
                 listViewProjects.setAdapter(simpleAdapter);

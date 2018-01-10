@@ -9,13 +9,17 @@
             android:icon="@drawable/ic_file"
             android:title=" Mes Projets" />
         <item
-            android:id="@+id/nav_jurys"
+            android:id="@+id/nav_my_jurys"
             android:icon="@drawable/ic_users"
             android:title="Mes Jurys" />
         <item
             android:id="@+id/nav_projets"
             android:icon="@drawable/ic_file"
             android:title="Projets" />
+        <item
+            android:id="@+id/nav_jurys"
+            android:icon="@drawable/ic_users"
+            android:title="Mes Jurys" />
         <item
             android:id="@+id/nav_eleves"
             android:icon="@drawable/ic_student"

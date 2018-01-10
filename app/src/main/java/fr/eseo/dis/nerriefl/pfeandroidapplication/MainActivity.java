@@ -170,11 +170,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_my_projets:
                 fragment = new ListMyProjects();
                 break;
-            case R.id.nav_jurys:
-                fragment = new ListJurys();
+            case R.id.nav_my_jurys:
+                fragment = new ListMyJury();
                 break;
             case R.id.nav_projets:
                 fragment = new ListProjects();
+                break;
+            case R.id.nav_jurys:
+                fragment = new ListJurys();
                 break;
             case R.id.nav_eleves:
 
