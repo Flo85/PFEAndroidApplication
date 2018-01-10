@@ -22,7 +22,7 @@ import java.util.List;
 public class ListMyProjects extends Fragment {
     private String login;
     private String token;
-    private ListView listViewProjects;
+    private ListView listViewMyProjects;
 
     public ListMyProjects (){
     }
@@ -44,11 +44,11 @@ public class ListMyProjects extends Fragment {
     }
 
     public ListView getListViewProjects() {
-        return listViewProjects;
+        return listViewMyProjects;
     }
 
     public void setListViewProjects(ListView listViewProjects) {
-        this.listViewProjects = listViewProjects;
+        this.listViewMyProjects = listViewMyProjects;
     }
 
     @Nullable
@@ -65,7 +65,7 @@ public class ListMyProjects extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.liprj(this.getContext(), login, token);
+        InputStream inputStream = WebService.myprj(this.getContext(), login, token);
 
         HashMap<String, Object> response = null;
 
@@ -77,7 +77,7 @@ public class ListMyProjects extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+            if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
                 List<Project> projects = (List) response.get("projects");
 
                 List<HashMap<String,String>> listItem = new ArrayList<HashMap<String, String>>();
@@ -88,9 +88,12 @@ public class ListMyProjects extends Fragment {
                     item.put("project_title",project.getTitle());
                     listItem.add(item);
                 }
+                listViewMyProjects.findViewById(R.id.list_projects);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity().getBaseContext(),listItem,R.layout.view_project,
                         new String[]{"project_title"}, new int[]{R.id.project_title});
-                listViewProjects.setAdapter(simpleAdapter);
+                listViewMyProjects.setAdapter(simpleAdapter);
+
+
             }
         }
     }
