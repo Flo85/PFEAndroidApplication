@@ -198,9 +198,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new Home();
         }
 
-        Log.d("MainActivity","Fragment : " + fragment);
+        displayFragment(fragment);
+    }
 
-        //replacing the fragment
+    public void displayFragment(Fragment fragment) {
         if (fragment != null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.content_frame, fragment);

@@ -1,5 +1,8 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +10,7 @@ import java.util.List;
  * Created by flo_n on 02/01/2018.
  */
 
-public class Project {
+public class Project implements Parcelable {
     private int id;
     private String title;
     private String description;
@@ -35,6 +38,29 @@ public class Project {
         this.confidentiality = confidentiality;
         this.posterCommited = posterCommited;
     }
+
+    protected Project(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        description = in.readString();
+        confidentiality = in.readInt();
+        posterCommited = in.readByte() != 0;
+        supervisor = in.readParcelable(User.class.getClassLoader());
+        students = in.createTypedArrayList(User.CREATOR);
+        poster = in.readString();
+    }
+
+    public static final Creator<Project> CREATOR = new Creator<Project>() {
+        @Override
+        public Project createFromParcel(Parcel in) {
+            return new Project(in);
+        }
+
+        @Override
+        public Project[] newArray(int size) {
+            return new Project[size];
+        }
+    };
 
     // Getters and setters
     public int getId() {
@@ -104,5 +130,22 @@ public class Project {
     // Method
     public void addStudent(User student) {
         students.add(student);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeInt(confidentiality);
+        dest.writeByte((byte) (posterCommited ? 1 : 0));
+        dest.writeParcelable(supervisor, flags);
+        dest.writeList(students);
+        dest.writeString(poster);
     }
 }

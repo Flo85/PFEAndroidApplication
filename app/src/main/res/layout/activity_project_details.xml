@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryLightGrey"
-    tools:context="fr.eseo.dis.nerriefl.pfeandroidapplication.ProjectDetails">
+    tools:context="fr.eseo.dis.nerriefl.pfeandroidapplication.DetailProject">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

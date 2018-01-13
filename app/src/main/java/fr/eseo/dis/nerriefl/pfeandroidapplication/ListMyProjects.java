@@ -1,25 +1,28 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ListMyProjects extends Fragment {
     private ListView listViewMyProjects;
+    private List<Project> projects;
+    private ListMyProjectsAdapter listMyProjectsAdapter;
 
     public ListMyProjects (){
     }
@@ -38,7 +41,6 @@ public class ListMyProjects extends Fragment {
         return inflater.inflate(R.layout.activity_list, container, false);
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -53,27 +55,45 @@ public class ListMyProjects extends Fragment {
         if (inputStream != null) {
             try {
                 response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
             if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Project> projects = (List) response.get("projects");
+                projects = (List) response.get("projects");
 
-                List<HashMap<String,String>> listItem = new ArrayList<HashMap<String, String>>();
-                HashMap<String, String> item;
-
-                for(Project project : projects){
-                    item = new HashMap<>();
-                    item.put("project_title", project.getTitle());
-                    listItem.add(item);
-                }
-                listViewMyProjects = view.findViewById(R.id.list);
-                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_project,
-                        new String[]{"project_title"}, new int[]{R.id.project_title});
-                listViewMyProjects.setAdapter(simpleAdapter);
+                RecyclerView recyclerView = view.findViewById(R.id.list);
+                recyclerView.setHasFixedSize(true);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+                listMyProjectsAdapter = new ListMyProjectsAdapter(this);
+                recyclerView.setAdapter(listMyProjectsAdapter);
+                ListMyProjects.ListMyProjectsTask listMyProjectsTask = new ListMyProjects.ListMyProjectsTask();
+                listMyProjectsTask.execute();
             }
         }
     }
+
+    public void clickProject(Project project) {
+        DetailProject detailProject = new DetailProject();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("project", project);
+        detailProject.setArguments(bundle);
+        ((MainActivity) getActivity()).displayFragment(detailProject);
+    }
+    private class ListMyProjectsTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            listMyProjectsAdapter.setProjects(projects);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listMyProjectsAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

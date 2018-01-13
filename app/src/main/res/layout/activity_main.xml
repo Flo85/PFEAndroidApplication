@@ -51,12 +51,4 @@
         android:layout_centerHorizontal="true"
         android:text="Votre mot de passe est :"
         android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/image_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/password"
-        android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_somanager_foreground" />
 </RelativeLayout>
