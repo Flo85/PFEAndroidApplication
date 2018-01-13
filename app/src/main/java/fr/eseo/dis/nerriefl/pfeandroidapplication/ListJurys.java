@@ -1,9 +1,12 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListJurys extends Fragment {
-
     private ListView listViewJurys;
+    private List<Jury> juries;
+    private ListJurysAdapter listJurysAdapter;
 
     public ListJurys(){
     }
@@ -60,9 +64,19 @@ public class ListJurys extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Jury> jurys = (List) response.get("juries");
+                List<Jury> juries = (List) response.get("juries");
 
-                List<HashMap<String, Integer>> listItem = new ArrayList<>();
+                RecyclerView recyclerView = view.findViewById(R.id.list);
+                recyclerView.setHasFixedSize(true);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+                listJurysAdapter = new ListJurysAdapter(this);
+                recyclerView.setAdapter(listJurysAdapter);
+                ListJurys.ListJurysTask listJurysTask = new ListJurys.ListJurysTask();
+                listJurysTask.execute();
+
+                /*List<HashMap<String, Integer>> listItem = new ArrayList<>();
                 HashMap<String, Integer> item;
 
                 for(Jury jury : jurys){
@@ -73,8 +87,31 @@ public class ListJurys extends Fragment {
                 listViewJurys = view.findViewById(R.id.list);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_jury,
                         new String[]{"jury_id"}, new int[]{R.id.jury_id});
-                listViewJurys.setAdapter(simpleAdapter);
+                listViewJurys.setAdapter(simpleAdapter);*/
             }
+        }
+    }
+
+    public void clickJury(Jury jury) {
+        /*DetailProject detailProject = new DetailProject();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("jury", jury);
+        detailProject.setArguments(bundle);
+        ((MainActivity) getActivity()).displayFragment(detailJury);*/
+    }
+
+    private class ListJurysTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            listJurysAdapter.setJuries(juries);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listJurysAdapter.notifyDataSetChanged();
         }
     }
 }

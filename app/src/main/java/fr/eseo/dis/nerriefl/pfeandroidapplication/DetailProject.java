@@ -20,7 +20,7 @@ public class DetailProject extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.view_detail_project, container, false);
+        return inflater.inflate(R.layout.activity_project_details, container, false);
     }
 
 
@@ -31,7 +31,7 @@ public class DetailProject extends Fragment {
 
         Project project = getArguments().getParcelable("project");
         ((TextView) view.findViewById(R.id.title)).setText(project.getTitle());
-        ((TextView) view.findViewById(R.id.description)).setText(project.getDescription());
+        ((TextView) view.findViewById(R.id.project_details_description)).setText(project.getDescription());
 
         DetailProjectTask detailProjectTask = new DetailProjectTask(view, project);
         detailProjectTask.execute();
@@ -51,7 +51,7 @@ public class DetailProject extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             if(project.isPosterCommited()) {
-                inputStream = WebService.postr(getContext(), ((MainActivity) getActivity()).getLogin(), project.getId(),
+                inputStream = WebService.postr(getContext(), ((MainActivity) getActivity()).getLogin(), project.getId(), "THUMB",
                         ((MainActivity) getActivity()).getToken());
                 if(inputStream != null) {
                     return true;
