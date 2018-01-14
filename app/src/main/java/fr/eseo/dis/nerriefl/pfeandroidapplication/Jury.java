@@ -1,13 +1,12 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by flo_n on 10/01/2018.
- */
-
-public class Jury {
+public class Jury implements Parcelable {
     private int id;
     private String date;
     private List<User> members;
@@ -30,6 +29,25 @@ public class Jury {
         this.members = members;
         this.projects = projects;
     }
+
+    protected Jury(Parcel in) {
+        id = in.readInt();
+        date = in.readString();
+        members = in.createTypedArrayList(User.CREATOR);
+        projects = in.createTypedArrayList(Project.CREATOR);
+    }
+
+    public static final Creator<Jury> CREATOR = new Creator<Jury>() {
+        @Override
+        public Jury createFromParcel(Parcel in) {
+            return new Jury(in);
+        }
+
+        @Override
+        public Jury[] newArray(int size) {
+            return new Jury[size];
+        }
+    };
 
     // Getters and setters
     public int getId() {
@@ -71,5 +89,18 @@ public class Jury {
 
     public void addProject(Project project) {
         projects.add(project);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(date);
+        dest.writeTypedList(members);
+        dest.writeTypedList(projects);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

@@ -1,9 +1,5 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
-/**
- * Created by flo_n on 10/01/2018.
- */
-
 public class Note {
     private User user;
     private double myNote;

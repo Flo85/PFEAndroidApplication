@@ -27,6 +27,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A login screen that offers login via email/password.
@@ -36,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String LOGIN = "Login";
     private static final String PASSWORD = "Password";
     private static final String TOKEN = "Token";
+    private static final String FORENAME = "Forename";
+    private static final String SURNAME = "Surname";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -297,18 +300,20 @@ public class LoginActivity extends AppCompatActivity {
         private final Context context;
         private final String userName;
         private final String password;
-        private HashMap<String, Object> response;
+        private String token;
+        private String forename;
+        private String surname;
 
         UserLoginTask(Context context, String userName, String password) {
             this.context = context;
             this.userName = userName;
             this.password = password;
-            this.response = null;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             InputStream inputStream = WebService.logon(context, userName, password);
+            HashMap<String, Object> response = null;
 
             if (inputStream != null) {
                 try {
@@ -318,8 +323,28 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (response != null && "LOGON".equals(response.get("api"))) {
-                    return "OK".equals(response.get("result"));
+                if (response != null && "LOGON".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    token = (String) response.get("token");
+                    inputStream = WebService.myprj(context, userName, token);
+
+                    if (inputStream != null) {
+                        try {
+                            response = JSONReader.read(inputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                            List<Project> projects = (List) response.get("projects");
+                            forename = projects.get(0).getSupervisor().getForeName();
+                            surname = projects.get(0).getSupervisor().getSurName();
+
+                            return true;
+                        }
+                        return false;
+                    }
+                    return false;
                 }
                 return false;
             }
@@ -335,7 +360,9 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra(LOGIN, userName);
                 intent.putExtra(PASSWORD, password);
-                intent.putExtra(TOKEN, (String) response.get("token"));
+                intent.putExtra(TOKEN, token);
+                intent.putExtra(FORENAME, forename);
+                intent.putExtra(SURNAME, surname);
                 startActivity(intent);
             } else {
                 userNameView.setError(getString(R.string.error_incorrect_username));

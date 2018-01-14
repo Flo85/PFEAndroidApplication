@@ -6,10 +6,6 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by flo_n on 02/01/2018.
- */
-
 public class Project implements Parcelable {
     private int id;
     private String title;
@@ -133,11 +129,6 @@ public class Project implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(title);
@@ -145,7 +136,12 @@ public class Project implements Parcelable {
         dest.writeInt(confidentiality);
         dest.writeByte((byte) (posterCommited ? 1 : 0));
         dest.writeParcelable(supervisor, flags);
-        dest.writeList(students);
+        dest.writeTypedList(students);
         dest.writeString(poster);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

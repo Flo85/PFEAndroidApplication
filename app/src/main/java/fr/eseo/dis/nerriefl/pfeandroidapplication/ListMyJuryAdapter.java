@@ -9,12 +9,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.ListJurysViewHolder> {
-    private ListJurys listJurys;
+public class ListMyJuryAdapter extends RecyclerView.Adapter<ListMyJuryAdapter.ListMyJuryViewHolder> {
+    private ListMyJury listMyJury;
     private List<Jury> juries;
 
-    public ListJurysAdapter(ListJurys listJurys) {
-        this.listJurys = listJurys;
+    public ListMyJuryAdapter(ListMyJury listMyJury) {
+        this.listMyJury = listMyJury;
         setJuries(new ArrayList<Jury>());
     }
 
@@ -23,13 +23,13 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
     }
 
     @Override
-    public ListJurysAdapter.ListJurysViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ListMyJuryAdapter.ListMyJuryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View projectView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_jury, parent, false);
-        return new ListJurysAdapter.ListJurysViewHolder(projectView);
+        return new ListMyJuryAdapter.ListMyJuryViewHolder(projectView);
     }
 
     @Override
-    public void onBindViewHolder(ListJurysAdapter.ListJurysViewHolder holder, int position) {
+    public void onBindViewHolder(ListMyJuryAdapter.ListMyJuryViewHolder holder, int position) {
         final Jury jury = juries.get(position);
 
         holder.juryDate.setText(jury.getDate());
@@ -49,7 +49,7 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
         holder.view.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                listJurys.clickJury(jury);
+                listMyJury.clickJury(jury);
             }
         });
     }
@@ -59,13 +59,13 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
         return juries.size();
     }
 
-    class ListJurysViewHolder extends RecyclerView.ViewHolder {
+    class ListMyJuryViewHolder extends RecyclerView.ViewHolder {
         private final View view;
 
         private final TextView juryDate;
         private final TextView juryMembers;
 
-        public ListJurysViewHolder(View view) {
+        public ListMyJuryViewHolder(View view) {
             super(view);
             this.view = view;
 

@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_my_projets"
             android:icon="@drawable/ic_file"
-            android:title=" Mes Projets" />
+            android:title="Mes Projets" />
         <item
             android:id="@+id/nav_my_jurys"
             android:icon="@drawable/ic_users"
@@ -19,7 +19,7 @@
         <item
             android:id="@+id/nav_jurys"
             android:icon="@drawable/ic_users"
-            android:title="Mes Jurys" />
+            android:title="Jurys" />
         <item
             android:id="@+id/nav_eleves"
             android:icon="@drawable/ic_student"

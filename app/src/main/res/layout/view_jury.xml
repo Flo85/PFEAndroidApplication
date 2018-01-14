@@ -1,15 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/jury_id"
+    android:layout_height="wrap_content">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text=""
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="16sp" />
-</LinearLayout>
+        android:background="@color/colorPrimaryLightGrey"
+        android:padding="6dp"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:id="@+id/jury_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/jury_date_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimaryRedLight"
+                android:text="Date :"/>
+            <TextView
+                android:id="@+id/jury_date_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="01/01/2018"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/jury_membres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/jury_date">
+            <TextView
+                android:id="@+id/jury_membres_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:padding="2dp"
+                android:textColor="@color/colorPrimaryRedLight"
+                android:text="Membres :"/>
+            <TextView
+                android:id="@+id/jury_membres_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="2dp"
+                android:maxLines="2"
+                android:singleLine="false"
+                android:ellipsize="end"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Membre 1, Membre 2"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

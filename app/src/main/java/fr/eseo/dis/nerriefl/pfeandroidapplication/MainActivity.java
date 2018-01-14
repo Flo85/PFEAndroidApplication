@@ -2,6 +2,7 @@ package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -35,52 +36,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String LOGIN = "Login";
     private static final String PASSWORD = "Password";
     private static final String TOKEN = "Token";
+    private static final String FORENAME = "Forename";
+    private static final String SURNAME = "Surname";
     private static final int MODIFY_NAME_RESULT_CODE = 0;
 
-    private Button connect;
-    private Button close;
-    private EditText loginText;
-    private EditText passwordText;
+    private User logged;
 
-    private TextView viewLogin;
-    private TextView viewPassword;
-
-    private String login;
-    private String password;
-    private String token;
-
-    public String getLogin() {
-        return login;
+    public User getLogged() {
+        return logged;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setLogged(User logged) {
+        this.logged = logged;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
-
-        login = getIntent().getExtras().getString(LOGIN);
-        password = getIntent().getExtras().getString(PASSWORD);
-        token = getIntent().getExtras().getString(TOKEN);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -96,45 +69,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         displaySelectedScreen(0);
 
-        //Toast.makeText(getApplicationContext(), "Connexion réussi", Toast.LENGTH_SHORT).show();
+        if(logged == null) {
+            logged = new User();
+            logged.setLogin(getIntent().getExtras().getString(LOGIN));
+            logged.setPassword(getIntent().getExtras().getString(PASSWORD));
+            logged.setToken(getIntent().getExtras().getString(TOKEN));
+            logged.setForeName(getIntent().getExtras().getString(FORENAME));
+            logged.setSurName(getIntent().getExtras().getString(SURNAME));
 
-        //login = findViewById(R.id.login);
-        //password = findViewById(R.id.password);
-
-        /*login.setText("Votre email est : " + getIntent().getExtras().getString(LOGIN));
-        login.setVisibility(View.VISIBLE);
-        password.setText("Votre mot de passe est : " + getIntent().getExtras().getString(PASSWORD));
-        password.setVisibility(View.VISIBLE);*/
-
-        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        Log.d("MainActivity", "Début lecture");
-        InputStream inputStream = WebService.jyinf(this, login, 2, token);
-        HashMap<String, Object> response = null;
-        if (inputStream != null) {
-            Log.d("MainActivity", "inputStream != null");
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            Log.d("MainActivity", "response : " + response);
-            if(response != null) {
-                Log.d("MainActivity", "response result : " + response.get("result"));
-                Log.d("MainActivity", "response api : " + response.get("api"));
-            }
-            if (response != null && "JYINF".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                Log.d("MainActivity", "response != null");
-                List<Project> list = (List) response.get("projects");
-                Log.d("MainActivity", "Projet du jury 2 : " + list.size());
-                for (int i = 0; i < list.size(); i++) {
-                    Log.d("MainActivity", "" + list.get(i).getTitle());
-                }
-            }
+            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText(logged.getForeName() + " "
+                    + logged.getSurName());
+            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText(logged.getForeName().toLowerCase()
+                    + "." + logged.getSurName().toLowerCase() + "@eseo.fr");
         }
-
-        Log.d("MainActivity", "Fin lecture");*/
     }
 
     @Override
@@ -217,5 +164,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         displaySelectedScreen(item.getItemId());
         return true;
+    }
+
+    private class MainActivityTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 }

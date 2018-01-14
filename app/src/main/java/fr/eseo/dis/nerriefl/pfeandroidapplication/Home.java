@@ -14,10 +14,6 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
-/**
- * Created by flo_n on 02/01/2018.
- */
-
 public class Home extends Fragment {
 
     @Nullable

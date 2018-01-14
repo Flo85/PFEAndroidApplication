@@ -22,19 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListJurys extends Fragment {
-    private ListView listViewJurys;
     private List<Jury> juries;
     private ListJurysAdapter listJurysAdapter;
 
-    public ListJurys(){
-    }
+    public ListJurys() {
 
-    public ListView getListViewJurys() {
-        return listViewJurys;
-    }
-
-    public void setListViewJurys(ListView listViewJurys) {
-        this.listViewJurys = listViewJurys;
     }
 
     @Nullable
@@ -52,8 +44,8 @@ public class ListJurys extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.lijur(this.getContext(), ((MainActivity) getActivity()).getLogin(),
-                ((MainActivity) getActivity()).getToken());
+        InputStream inputStream = WebService.lijur(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                ((MainActivity) getActivity()).getLogged().getToken());
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {
@@ -64,7 +56,7 @@ public class ListJurys extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Jury> juries = (List) response.get("juries");
+                juries = (List) response.get("juries");
 
                 RecyclerView recyclerView = view.findViewById(R.id.list);
                 recyclerView.setHasFixedSize(true);
@@ -75,29 +67,16 @@ public class ListJurys extends Fragment {
                 recyclerView.setAdapter(listJurysAdapter);
                 ListJurys.ListJurysTask listJurysTask = new ListJurys.ListJurysTask();
                 listJurysTask.execute();
-
-                /*List<HashMap<String, Integer>> listItem = new ArrayList<>();
-                HashMap<String, Integer> item;
-
-                for(Jury jury : jurys){
-                    item = new HashMap<>();
-                    item.put("jury_id", jury.getId());
-                    listItem.add(item);
-                }
-                listViewJurys = view.findViewById(R.id.list);
-                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_jury,
-                        new String[]{"jury_id"}, new int[]{R.id.jury_id});
-                listViewJurys.setAdapter(simpleAdapter);*/
             }
         }
     }
 
     public void clickJury(Jury jury) {
-        /*DetailProject detailProject = new DetailProject();
+        DetailJury detailJury = new DetailJury();
         Bundle bundle = new Bundle();
         bundle.putParcelable("jury", jury);
-        detailProject.setArguments(bundle);
-        ((MainActivity) getActivity()).displayFragment(detailJury);*/
+        detailJury.setArguments(bundle);
+        ((MainActivity) getActivity()).displayFragment(detailJury);
     }
 
     private class ListJurysTask extends AsyncTask<Void, Void, Void> {

@@ -1,10 +1,13 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListMyJury extends Fragment {
+    private List<Jury> juries;
+    private ListMyJuryAdapter listMyJuryAdapter;
 
-    private ListView listViewMyJury;
+    public ListMyJury() {
 
-    public ListMyJury(){
-    }
-
-    public ListView getListViewJurys() {
-        return listViewMyJury;
-    }
-
-    public void setListViewJurys(ListView listViewJury) {
-        this.listViewMyJury = listViewMyJury;
     }
 
     @Nullable
@@ -49,8 +45,8 @@ public class ListMyJury extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.myjur(this.getContext(), ((MainActivity) getActivity()).getLogin(),
-                ((MainActivity) getActivity()).getToken());
+        InputStream inputStream = WebService.myjur(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                ((MainActivity) getActivity()).getLogged().getToken());
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {
@@ -61,21 +57,41 @@ public class ListMyJury extends Fragment {
                 e.printStackTrace();
             }
             if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                List<Jury> jurys = (List) response.get("juries");
+                juries = (List) response.get("juries");
 
-                List<HashMap<String, Integer>> listItem = new ArrayList<>();
-                HashMap<String, Integer> item;
-
-                for(Jury jury : jurys){
-                    item = new HashMap<>();
-                    item.put("jury_id", jury.getId());
-                    listItem.add(item);
-                }
-                listViewMyJury = view.findViewById(R.id.list);
-                SimpleAdapter simpleAdapter = new SimpleAdapter(this.getActivity(),listItem, R.layout.view_jury,
-                        new String[]{"jury_id"}, new int[]{R.id.jury_id});
-                listViewMyJury.setAdapter(simpleAdapter);
+                RecyclerView recyclerView = view.findViewById(R.id.list);
+                recyclerView.setHasFixedSize(true);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+                listMyJuryAdapter = new ListMyJuryAdapter(this);
+                recyclerView.setAdapter(listMyJuryAdapter);
+                ListMyJury.ListMyJuryTask listMyJuryTask = new ListMyJury.ListMyJuryTask();
+                listMyJuryTask.execute();
             }
+        }
+    }
+
+    public void clickJury(Jury jury) {
+        DetailJury detailJury = new DetailJury();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("jury", jury);
+        detailJury.setArguments(bundle);
+        ((MainActivity) getActivity()).displayFragment(detailJury);
+    }
+
+    private class ListMyJuryTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            listMyJuryAdapter.setJuries(juries);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listMyJuryAdapter.notifyDataSetChanged();
         }
     }
 }

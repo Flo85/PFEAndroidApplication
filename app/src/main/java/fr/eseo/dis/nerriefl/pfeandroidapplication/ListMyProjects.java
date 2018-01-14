@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import org.json.JSONException;
 
@@ -20,19 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListMyProjects extends Fragment {
-    private ListView listViewMyProjects;
     private List<Project> projects;
     private ListMyProjectsAdapter listMyProjectsAdapter;
 
-    public ListMyProjects (){
-    }
+    public ListMyProjects () {
 
-    public ListView getListViewProjects() {
-        return listViewMyProjects;
-    }
-
-    public void setListViewProjects(ListView listViewProjects) {
-        this.listViewMyProjects = listViewMyProjects;
     }
 
     @Nullable
@@ -49,8 +40,8 @@ public class ListMyProjects extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.myprj(this.getContext(), ((MainActivity) getActivity()).getLogin(),
-                ((MainActivity) getActivity()).getToken());
+        InputStream inputStream = WebService.myprj(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                ((MainActivity) getActivity()).getLogged().getToken());
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {

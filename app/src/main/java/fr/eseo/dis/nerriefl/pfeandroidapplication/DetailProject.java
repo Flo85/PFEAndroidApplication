@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import java.io.InputStream;
 
 public class DetailProject extends Fragment {
+    private Bitmap poster;
 
     @Nullable
     @Override
@@ -27,14 +29,31 @@ public class DetailProject extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle("Détail Projet");
+        getActivity().setTitle("Détails Projet");
 
         Project project = getArguments().getParcelable("project");
         ((TextView) view.findViewById(R.id.title)).setText(project.getTitle());
         ((TextView) view.findViewById(R.id.project_details_description)).setText(project.getDescription());
 
+        ((ImageView) view.findViewById(R.id.thumb)).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(poster != null) {
+                    clickPoster(poster);
+                }
+            }
+        });
+
         DetailProjectTask detailProjectTask = new DetailProjectTask(view, project);
         detailProjectTask.execute();
+    }
+
+    private void clickPoster(Bitmap poster) {
+        DetailPoster detailPoster = new DetailPoster();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("poster", poster);
+        detailPoster.setArguments(bundle);
+        ((MainActivity) getActivity()).displayFragment(detailPoster);
     }
 
     public class DetailProjectTask extends AsyncTask<Void, Void, Boolean> {
@@ -51,8 +70,8 @@ public class DetailProject extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             if(project.isPosterCommited()) {
-                inputStream = WebService.postr(getContext(), ((MainActivity) getActivity()).getLogin(), project.getId(), "THUMB",
-                        ((MainActivity) getActivity()).getToken());
+                inputStream = WebService.postr(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(), project.getId(),
+                        ((MainActivity) getActivity()).getLogged().getToken());
                 if(inputStream != null) {
                     return true;
                 }
@@ -66,6 +85,7 @@ public class DetailProject extends Fragment {
             if (success) {
                 Bitmap thumb = BitmapFactory.decodeStream(inputStream);
                 ((ImageView) view.findViewById(R.id.thumb)).setImageBitmap(thumb);
+                poster = thumb;
             }
         }
     }

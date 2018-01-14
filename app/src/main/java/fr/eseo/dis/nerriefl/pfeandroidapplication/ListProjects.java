@@ -23,19 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ListProjects extends Fragment {
-    private ListView listViewProjects;
     private List<Project> projects;
     private ListProjectsAdapter listProjectsAdapter;
 
-    public ListProjects (){
-    }
+    public ListProjects () {
 
-    public ListView getListViewProjects() {
-        return listViewProjects;
-    }
-
-    public void setListViewProjects(ListView listViewProjects) {
-        this.listViewProjects = listViewProjects;
     }
 
     @Nullable
@@ -52,8 +44,8 @@ public class ListProjects extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        InputStream inputStream = WebService.liprj(this.getContext(), ((MainActivity) getActivity()).getLogin(),
-                ((MainActivity) getActivity()).getToken());
+        InputStream inputStream = WebService.liprj(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                ((MainActivity) getActivity()).getLogged().getToken());
         HashMap<String, Object> response = null;
         if (inputStream != null) {
             try {

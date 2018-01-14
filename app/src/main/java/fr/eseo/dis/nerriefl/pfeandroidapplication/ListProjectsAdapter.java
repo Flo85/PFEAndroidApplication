@@ -11,10 +11,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by flo_n on 10/01/2018.
- */
-
 public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapter.ListProjectsViewHolder> {
     private ListProjects listProjects;
     private List<Project> projects;

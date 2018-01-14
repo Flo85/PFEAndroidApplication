@@ -15,10 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by Flo on 20/12/2017.
- */
-
 public class JSONReader {
 
     private static HashMap<String, Object> result;

@@ -3,14 +3,18 @@ package fr.eseo.dis.nerriefl.pfeandroidapplication;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by flo_n on 02/01/2018.
- */
+import java.util.List;
 
 public class User implements Parcelable {
     private int id;
     private String foreName;
     private String surName;
+    private String token;
+    private String login;
+    private String password;
+
+    private List<Project> projectsSupervised;
+    private List<Project> projectsEvaluated;
 
     // Constructors
     public User() {
@@ -35,6 +39,11 @@ public class User implements Parcelable {
         id = in.readInt();
         foreName = in.readString();
         surName = in.readString();
+        token = in.readString();
+        login = in.readString();
+        password = in.readString();
+        projectsSupervised = in.createTypedArrayList(Project.CREATOR);
+        projectsEvaluated = in.createTypedArrayList(Project.CREATOR);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -74,15 +83,61 @@ public class User implements Parcelable {
         this.surName = surName;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getToken() {
+        return token;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Project> getProjectsSupervised() {
+        return projectsSupervised;
+    }
+
+    public void setProjectsSupervised(List<Project> projectsSupervised) {
+        this.projectsSupervised = projectsSupervised;
+    }
+
+    public List<Project> getProjectsEvaluated() {
+        return projectsEvaluated;
+    }
+
+    public void setProjectsEvaluated(List<Project> projectsEvaluated) {
+        this.projectsEvaluated = projectsEvaluated;
+    }
+
+    // Methods
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(foreName);
         dest.writeString(surName);
+        dest.writeString(token);
+        dest.writeString(login);
+        dest.writeString(password);
+        dest.writeTypedList(projectsSupervised);
+        dest.writeTypedList(projectsEvaluated);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

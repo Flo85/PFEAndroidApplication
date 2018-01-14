@@ -4,13 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="fr.eseo.dis.nerriefl.pfeandroidapplication.MainActivity"
-    tools:showIn="@layout/app_bar_navigation">
-
-    <FrameLayout
-        android:id="@+id/content_frame"
+    tools:context="fr.eseo.dis.nerriefl.pfeandroidapplication.DetailPoster">
+    <ImageView
+        android:id="@+id/poster_detail_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 </android.support.constraint.ConstraintLayout>
