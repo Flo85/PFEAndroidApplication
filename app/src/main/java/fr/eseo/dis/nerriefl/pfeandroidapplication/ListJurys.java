@@ -41,34 +41,15 @@ public class ListJurys extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Les Jurys");
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        InputStream inputStream = WebService.lijur(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                ((MainActivity) getActivity()).getLogged().getToken());
-        HashMap<String, Object> response = null;
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                juries = (List) response.get("juries");
-
-                RecyclerView recyclerView = view.findViewById(R.id.list);
-                recyclerView.setHasFixedSize(true);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                listJurysAdapter = new ListJurysAdapter(this);
-                recyclerView.setAdapter(listJurysAdapter);
-                ListJurys.ListJurysTask listJurysTask = new ListJurys.ListJurysTask();
-                listJurysTask.execute();
-            }
-        }
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        listJurysAdapter = new ListJurysAdapter(this);
+        recyclerView.setAdapter(listJurysAdapter);
+        ListJurys.ListJurysTask listJurysTask = new ListJurys.ListJurysTask();
+        listJurysTask.execute();
     }
 
     public void clickJury(Jury jury) {
@@ -83,6 +64,21 @@ public class ListJurys extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            InputStream inputStream = WebService.lijur(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                    ((MainActivity) getActivity()).getLogged().getToken());
+            HashMap<String, Object> response = null;
+            if (inputStream != null) {
+                try {
+                    response = JSONReader.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (response != null && "LIJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    juries = (List) response.get("juries");
+                }
+            }
             listJurysAdapter.setJuries(juries);
             return null;
         }

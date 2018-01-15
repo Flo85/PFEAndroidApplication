@@ -34,14 +34,19 @@ public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapte
     public void onBindViewHolder(ListProjectsAdapter.ListProjectsViewHolder holder, int position) {
         final Project project = projects.get(position);
         holder.projectTitle.setText(project.getTitle());
-        holder.confidentiality.setText("Confidentialité : " + project.getConfidentiality());
+        if(project.getConfidentiality() == 0
+                || ((MainActivity) listProjects.getActivity()).getLogged().isProjectDetailsAvailable(project.getId())) {
+            holder.confidentiality.setText("Détails accessibles");
 
-        holder.view.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                listProjects.clickProject(project);
-            }
-        });
+            holder.view.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    listProjects.clickProject(project);
+                }
+            });
+        } else {
+            holder.confidentiality.setText("Confidentiel");
+        }
     }
 
     @Override

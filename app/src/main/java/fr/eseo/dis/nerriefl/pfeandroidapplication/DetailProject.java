@@ -84,7 +84,9 @@ public class DetailProject extends Fragment {
         protected void onPostExecute(final Boolean success) {
             if (success) {
                 Bitmap thumb = BitmapFactory.decodeStream(inputStream);
-                ((ImageView) view.findViewById(R.id.thumb)).setImageBitmap(thumb);
+                if(view.findViewById(R.id.thumb) != null) {
+                    ((ImageView) view.findViewById(R.id.thumb)).setImageBitmap(thumb);
+                }
                 poster = thumb;
             }
         }

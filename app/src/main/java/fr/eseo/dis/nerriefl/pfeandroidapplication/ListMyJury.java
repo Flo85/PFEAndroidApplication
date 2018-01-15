@@ -42,34 +42,15 @@ public class ListMyJury extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Mes Jurys");
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        InputStream inputStream = WebService.myjur(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                ((MainActivity) getActivity()).getLogged().getToken());
-        HashMap<String, Object> response = null;
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                juries = (List) response.get("juries");
-
-                RecyclerView recyclerView = view.findViewById(R.id.list);
-                recyclerView.setHasFixedSize(true);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                listMyJuryAdapter = new ListMyJuryAdapter(this);
-                recyclerView.setAdapter(listMyJuryAdapter);
-                ListMyJury.ListMyJuryTask listMyJuryTask = new ListMyJury.ListMyJuryTask();
-                listMyJuryTask.execute();
-            }
-        }
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        listMyJuryAdapter = new ListMyJuryAdapter(this);
+        recyclerView.setAdapter(listMyJuryAdapter);
+        ListMyJury.ListMyJuryTask listMyJuryTask = new ListMyJury.ListMyJuryTask();
+        listMyJuryTask.execute();
     }
 
     public void clickJury(Jury jury) {
@@ -84,6 +65,21 @@ public class ListMyJury extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            InputStream inputStream = WebService.myjur(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                    ((MainActivity) getActivity()).getLogged().getToken());
+            HashMap<String, Object> response = null;
+            if (inputStream != null) {
+                try {
+                    response = JSONReader.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    juries = (List) response.get("juries");
+                }
+            }
             listMyJuryAdapter.setJuries(juries);
             return null;
         }

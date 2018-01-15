@@ -1,5 +1,6 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -41,32 +42,15 @@ public class ListProjects extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Projets");
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        InputStream inputStream = WebService.liprj(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                ((MainActivity) getActivity()).getLogged().getToken());
-        HashMap<String, Object> response = null;
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                projects = (List) response.get("projects");
-
-                RecyclerView recyclerView = view.findViewById(R.id.list);
-                recyclerView.setHasFixedSize(true);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                listProjectsAdapter = new ListProjectsAdapter(this);
-                recyclerView.setAdapter(listProjectsAdapter);
-                ListProjectsTask listProjectsTask = new ListProjectsTask();
-                listProjectsTask.execute();
-            }
-        }
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        listProjectsAdapter = new ListProjectsAdapter(this);
+        recyclerView.setAdapter(listProjectsAdapter);
+        ListProjectsTask listProjectsTask = new ListProjectsTask();
+        listProjectsTask.execute();
     }
 
     public void clickProject(Project project) {
@@ -81,6 +65,19 @@ public class ListProjects extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            InputStream inputStream = WebService.liprj(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                    ((MainActivity) getActivity()).getLogged().getToken());
+            HashMap<String, Object> response = null;
+            if (inputStream != null) {
+                try {
+                    response = JSONReader.read(inputStream);
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    projects = (List) response.get("projects");
+                }
+            }
             listProjectsAdapter.setProjects(projects);
             return null;
         }

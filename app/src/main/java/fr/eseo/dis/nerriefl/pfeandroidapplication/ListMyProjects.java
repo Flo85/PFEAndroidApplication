@@ -37,32 +37,15 @@ public class ListMyProjects extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle(" Mes Projets");
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        InputStream inputStream = WebService.myprj(this.getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                ((MainActivity) getActivity()).getLogged().getToken());
-        HashMap<String, Object> response = null;
-        if (inputStream != null) {
-            try {
-                response = JSONReader.read(inputStream);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-            if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                projects = (List) response.get("projects");
-
-                RecyclerView recyclerView = view.findViewById(R.id.list);
-                recyclerView.setHasFixedSize(true);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                listMyProjectsAdapter = new ListMyProjectsAdapter(this);
-                recyclerView.setAdapter(listMyProjectsAdapter);
-                ListMyProjects.ListMyProjectsTask listMyProjectsTask = new ListMyProjects.ListMyProjectsTask();
-                listMyProjectsTask.execute();
-            }
-        }
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        listMyProjectsAdapter = new ListMyProjectsAdapter(this);
+        recyclerView.setAdapter(listMyProjectsAdapter);
+        ListMyProjects.ListMyProjectsTask listMyProjectsTask = new ListMyProjects.ListMyProjectsTask();
+        listMyProjectsTask.execute();
     }
 
     public void clickProject(Project project) {
@@ -76,6 +59,19 @@ public class ListMyProjects extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            InputStream inputStream = WebService.myprj(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+                    ((MainActivity) getActivity()).getLogged().getToken());
+            HashMap<String, Object> response = null;
+            if (inputStream != null) {
+                try {
+                    response = JSONReader.read(inputStream);
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    projects = (List) response.get("projects");
+                }
+            }
             listMyProjectsAdapter.setProjects(projects);
             return null;
         }

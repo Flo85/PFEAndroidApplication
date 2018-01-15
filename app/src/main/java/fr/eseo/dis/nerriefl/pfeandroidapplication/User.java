@@ -9,12 +9,13 @@ public class User implements Parcelable {
     private int id;
     private String foreName;
     private String surName;
+
     private String token;
     private String login;
     private String password;
 
     private List<Project> projectsSupervised;
-    private List<Project> projectsEvaluated;
+    private List<Project> projectsToEvaluate;
 
     // Constructors
     public User() {
@@ -43,7 +44,7 @@ public class User implements Parcelable {
         login = in.readString();
         password = in.readString();
         projectsSupervised = in.createTypedArrayList(Project.CREATOR);
-        projectsEvaluated = in.createTypedArrayList(Project.CREATOR);
+        projectsToEvaluate = in.createTypedArrayList(Project.CREATOR);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -115,15 +116,41 @@ public class User implements Parcelable {
         this.projectsSupervised = projectsSupervised;
     }
 
-    public List<Project> getProjectsEvaluated() {
-        return projectsEvaluated;
+    public List<Project> getProjectsToEvaluate() {
+        return projectsToEvaluate;
     }
 
-    public void setProjectsEvaluated(List<Project> projectsEvaluated) {
-        this.projectsEvaluated = projectsEvaluated;
+    public void setProjectsToEvaluate(List<Project> projectsToEvaluate) {
+        this.projectsToEvaluate = projectsToEvaluate;
     }
 
     // Methods
+    public boolean isProjectInProjectsSupervised(int projectId) {
+        int i = 0;
+        while(i < projectsSupervised.size()) {
+            if(projectId == projectsSupervised.get(i).getId()) {
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
+
+    public boolean isProjectInProjectsToEvaluate(int projectId) {
+        int i = 0;
+        while(i < projectsToEvaluate.size()) {
+            if(projectId == projectsToEvaluate.get(i).getId()) {
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
+
+    public boolean isProjectDetailsAvailable(int projectId) {
+        return isProjectInProjectsSupervised(projectId) || isProjectInProjectsToEvaluate(projectId);
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
@@ -133,7 +160,7 @@ public class User implements Parcelable {
         dest.writeString(login);
         dest.writeString(password);
         dest.writeTypedList(projectsSupervised);
-        dest.writeTypedList(projectsEvaluated);
+        dest.writeTypedList(projectsToEvaluate);
     }
 
     @Override

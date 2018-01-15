@@ -1,5 +1,6 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -28,6 +29,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TOKEN = "Token";
     private static final String FORENAME = "Forename";
     private static final String SURNAME = "Surname";
-    private static final int MODIFY_NAME_RESULT_CODE = 0;
+    private static Fragment fragmentActual = new Home();
 
     private User logged;
 
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        displaySelectedScreen(0);
+        displayFragment(fragmentActual);
 
         if(logged == null) {
             logged = new User();
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     + logged.getSurName());
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText(logged.getForeName().toLowerCase()
                     + "." + logged.getSurName().toLowerCase() + "@eseo.fr");
+
+            MainActivityTask mainActivityTask = new MainActivityTask(this);
+            mainActivityTask.execute();
         }
     }
 
@@ -153,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.content_frame, fragment);
             fragmentTransaction.commit();
+
+            fragmentActual = fragment;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -166,16 +173,85 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private class MainActivityTask extends AsyncTask<Void, Void, Void> {
+    private class MainActivityTask extends AsyncTask<Void, Void, Boolean> {
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
+        private int numberAttempts;
+
+        private final Context context;
+        private List<Project> projectsSupervised;
+        private List<Project> projectsToEvaluate;
+
+        MainActivityTask(Context context) {
+            this.numberAttempts = 3;
+            this.context = context;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected Boolean doInBackground(Void... voids) {
+            InputStream inputStream = WebService.myprj(context, logged.getLogin(), logged.getToken());
+            HashMap<String, Object> response = null;
+
+            if (inputStream != null) {
+                try {
+                    response = JSONReader.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                    projectsSupervised = (List) response.get("projects");
+                    inputStream = WebService.myjur(context, logged.getLogin(), logged.getToken());
+
+                    if (inputStream != null) {
+                        try {
+                            response = JSONReader.read(inputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                            List<Jury> juries = (List) response.get("juries");
+                            projectsToEvaluate = new ArrayList<Project>();
+                            for(Jury jury : juries) {
+                                for(Project project : jury.getProjects()) {
+                                    boolean present = false;
+                                    int i = 0;
+                                    while(i < projectsToEvaluate.size() && !present) {
+                                        if(project.getId() == projectsToEvaluate.get(i).getId()) {
+                                            present = true;
+                                        }
+                                        i++;
+                                    }
+                                    if(!present) {
+                                        projectsToEvaluate.add(project);
+                                    }
+                                }
+                            }
+
+                            return true;
+                        }
+                        return false;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            super.onPostExecute(success);
+
+            if(success) {
+                logged.setProjectsSupervised(projectsSupervised);
+                logged.setProjectsToEvaluate(projectsToEvaluate);
+            } else if(numberAttempts > 0) {
+                numberAttempts--;
+                this.execute();
+            }
         }
     }
 }
