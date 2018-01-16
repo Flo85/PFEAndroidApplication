@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,8 +67,8 @@ public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapte
             this.view = view;
 
             projectTitle = view.findViewById(R.id.project_title);
-            confidentiality = view.findViewById(R.id.project_confidentiality);
-            posterThumb = view.findViewById(R.id.poster_thumb);
+            confidentiality = view.findViewById(R.id.project_details_confidentiality);
+            posterThumb = view.findViewById(R.id.thumb);
         }
     }
 }

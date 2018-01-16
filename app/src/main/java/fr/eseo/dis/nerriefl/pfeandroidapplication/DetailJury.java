@@ -33,5 +33,15 @@ public class DetailJury extends Fragment {
             }
         }
         ((TextView) view.findViewById(R.id.jury_details_members)).setText(members);
+
+        String projects = "";
+        for(int i = 0; i < jury.getProjects().size(); i++){
+            projects += jury.getProjects().get(i).getTitle();
+            if(i < jury.getProjects().size() - 1){
+                projects += ", ";
+            }
+        }
+
+        ((TextView) view.findViewById(R.id.jury_details_list_projects)).setText(projects);
     }
 }

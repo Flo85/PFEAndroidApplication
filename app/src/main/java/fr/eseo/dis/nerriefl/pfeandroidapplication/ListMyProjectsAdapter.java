@@ -65,8 +65,8 @@ public class ListMyProjectsAdapter extends RecyclerView.Adapter<ListMyProjectsAd
             this.view = view;
 
             projectTitle = view.findViewById(R.id.project_title);
-            confidentiality = view.findViewById(R.id.project_confidentiality);
-            posterThumb = view.findViewById(R.id.poster_thumb);
+            confidentiality = view.findViewById(R.id.project_details_confidentiality);
+            posterThumb = view.findViewById(R.id.thumb);
         }
     }
 }
