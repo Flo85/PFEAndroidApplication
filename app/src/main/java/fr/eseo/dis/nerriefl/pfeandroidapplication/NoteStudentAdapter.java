@@ -2,6 +2,8 @@ package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +35,29 @@ public class NoteStudentAdapter extends RecyclerView.Adapter<NoteStudentAdapter.
 
     @Override
     public NoteStudentAdapter.NoteStudentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_note_student, parent, false);
-        return new NoteStudentAdapter.NoteStudentViewHolder(view);
+        View noteStudentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_note_student, parent, false);
+        return new NoteStudentAdapter.NoteStudentViewHolder(noteStudentView);
     }
 
     @Override
     public void onBindViewHolder(final NoteStudentAdapter.NoteStudentViewHolder holder, int position) {
         final Note note = notes.get(position);
-        holder.projectNotationLabel.setText(note.getUser().getForeName()+" "+note.getUser().getSurName());
-        holder.projectNoteMoyenne.setText(""+note.getAverageNote());
-        holder.projectNoteJury.setText(""+note.getMyNote());
-        holder.projectSauvegardeNoteJury.setOnClickListener(new View.OnClickListener(){
+        holder.projectNotationLabel.setText(note.getUser().getForeName() + " " + note.getUser().getSurName());
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setMaximumFractionDigits(2);
+        holder.projectNoteMoyenne.setText("" + decimalFormat.format(note.getAverageNote()));
+        holder.projectNoteJury.setText("" + note.getMyNote());
+        holder.projectSauvegardeNoteJury.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detailProject.saveNote(note.getUser(), Double.parseDouble(holder.projectNoteJury.getText().toString()));
+                String givenNote = holder.projectNoteJury.getText().toString();
+                if (!TextUtils.isEmpty(givenNote)) {
+                    try {
+                        detailProject.saveNote(note.getUser(), Double.parseDouble(givenNote));
+                    } catch (NumberFormatException e) {
+                        Log.e("NoteStudentAdapter", "Erreur de conversion en décimal !");
+                    }
+                }
             }
         });
     }

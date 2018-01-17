@@ -1,6 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,8 @@ public class ListMyJuryAdapter extends RecyclerView.Adapter<ListMyJuryAdapter.Li
 
     @Override
     public ListMyJuryAdapter.ListMyJuryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View projectView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_jury, parent, false);
-        return new ListMyJuryAdapter.ListMyJuryViewHolder(projectView);
+        View juryView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_jury, parent, false);
+        return new ListMyJuryAdapter.ListMyJuryViewHolder(juryView);
     }
 
     @Override
@@ -46,12 +47,21 @@ public class ListMyJuryAdapter extends RecyclerView.Adapter<ListMyJuryAdapter.Li
             holder.juryMembers.setText("Aucun membre");
         }
 
-        holder.view.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                listMyJury.clickJury(jury);
-            }
-        });
+        if(jury.isMember(((MainActivity) listMyJury.getActivity()).getLogged())){
+            holder.view.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    listMyJury.clickJury(jury);
+                }
+            });
+        } else {
+            holder.view.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
     }
 
     @Override

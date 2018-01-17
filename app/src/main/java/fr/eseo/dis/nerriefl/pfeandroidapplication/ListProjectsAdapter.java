@@ -2,6 +2,7 @@ package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +36,20 @@ public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapte
     public void onBindViewHolder(ListProjectsAdapter.ListProjectsViewHolder holder, int position) {
         final Project project = projects.get(position);
         holder.projectTitle.setText(project.getTitle());
-        if(project.getConfidentiality() == 0
+        String students = "";
+        for (User student : project.getStudents()) {
+            if (!student.equals(project.getStudents().get(0))) {
+                students += ", ";
+            }
+            students += student.getForeName() + " " + student.getSurName();
+        }
+        holder.students.setText(students);
+        if (project.getConfidentiality() == 0
                 || ((MainActivity) listProjects.getActivity()).getLogged().isProjectDetailsAvailable(project.getId())) {
-            holder.confidentiality.setText("Détails accessibles");
+            holder.confidentiality.setText("");
+            holder.confidentiality.setVisibility(View.GONE);
 
-            holder.view.setOnClickListener(new View.OnClickListener(){
+            holder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listProjects.clickProject(project);
@@ -47,6 +57,13 @@ public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapte
             });
         } else {
             holder.confidentiality.setText("Confidentiel");
+            holder.confidentiality.setVisibility(View.VISIBLE);
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 
@@ -59,16 +76,16 @@ public class ListProjectsAdapter extends RecyclerView.Adapter<ListProjectsAdapte
         private final View view;
 
         private final TextView projectTitle;
+        private final TextView students;
         private final TextView confidentiality;
-        private final ImageView posterThumb;
 
         public ListProjectsViewHolder(View view) {
             super(view);
             this.view = view;
 
             projectTitle = view.findViewById(R.id.project_title);
-            confidentiality = view.findViewById(R.id.project_details_confidentiality);
-            posterThumb = view.findViewById(R.id.thumb);
+            students = view.findViewById(R.id.etudiant_membres_content);
+            confidentiality = view.findViewById(R.id.confidentiality);
         }
     }
 }

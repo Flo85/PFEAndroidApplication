@@ -1,6 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String SURNAME = "Surname";
     private static Fragment fragmentActual = new Home();
 
+    private static final String JPO_LOGIN = "jpo";
+
     private User logged;
 
     public User getLogged() {
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         displayFragment(fragmentActual);
 
-        if(logged == null) {
+        if (logged == null) {
             logged = new User();
             logged.setLogin(getIntent().getExtras().getString(LOGIN));
             logged.setPassword(getIntent().getExtras().getString(PASSWORD));
@@ -79,10 +82,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             logged.setForeName(getIntent().getExtras().getString(FORENAME));
             logged.setSurName(getIntent().getExtras().getString(SURNAME));
 
-            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText(logged.getForeName() + " "
-                    + logged.getSurName());
-            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText(logged.getForeName().toLowerCase()
-                    + "." + logged.getSurName().toLowerCase() + "@eseo.fr");
+            if(JPO_LOGIN.equals(logged.getLogin())){
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText("Journée Portes Ouvertes");
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText("");
+                navigationView.getHeaderView(0).findViewById(R.id.logged_email).setVisibility(View.GONE);
+
+                findItemByTitle(navigationView, "Mes Projets").setVisible(false);
+                findItemByTitle(navigationView, "Mes Jurys").setVisible(false);
+                findItemByTitle(navigationView, "Projets JPO").setVisible(true);
+            } else if("".equals(logged.getForeName()) && "".equals(logged.getSurName())){
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText("");
+                navigationView.getHeaderView(0).findViewById(R.id.logged_name).setVisibility(View.GONE);
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText("");
+                navigationView.getHeaderView(0).findViewById(R.id.logged_email).setVisibility(View.GONE);
+                findItemByTitle(navigationView, "Projets JPO").setVisible(false);
+            } else {
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText(logged.getForeName() + " "
+                        + logged.getSurName());
+                ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText(logged.getForeName().toLowerCase()
+                        + "." + logged.getSurName().toLowerCase() + "@eseo.fr");
+                findItemByTitle(navigationView, "Projets JPO").setVisible(false);
+            }
 
             MainActivityTask mainActivityTask = new MainActivityTask(this);
             mainActivityTask.execute();
@@ -114,7 +134,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_disconnect) {
+            fragmentActual = new Home();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -140,11 +163,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_jurys:
                 fragment = new ListJurys();
                 break;
-            case R.id.nav_eleves:
-
-                break;
-            case R.id.nav_notifications:
-
+            case R.id.nav_projets_jpo:
+                fragment = new ListProjectsJPO();
                 break;
             default:
                 fragment = new Home();
@@ -173,22 +193,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    public MenuItem findItemByTitle(NavigationView navigationView, String title){
+        int i = 0;
+        while(i<navigationView.getMenu().size()){
+            if(navigationView.getMenu().getItem(i).getTitle().equals(title)){
+                return navigationView.getMenu().getItem(i);
+            }
+            i++;
+        }
+        return null;
+    }
+
     private class MainActivityTask extends AsyncTask<Void, Void, Boolean> {
 
         private int numberAttempts;
 
-        private final Context context;
+        private final MainActivity mainActivity;
+        private List<Jury> myJuries;
         private List<Project> projectsSupervised;
         private List<Project> projectsToEvaluate;
 
-        MainActivityTask(Context context) {
+        MainActivityTask(MainActivity mainActivity) {
             this.numberAttempts = 3;
-            this.context = context;
+            this.mainActivity = mainActivity;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            InputStream inputStream = WebService.myprj(context, logged.getLogin(), logged.getToken());
+            InputStream inputStream = WebService.myprj(mainActivity, logged.getLogin(), logged.getToken());
             HashMap<String, Object> response = null;
 
             if (inputStream != null) {
@@ -201,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
                     projectsSupervised = (List) response.get("projects");
-                    inputStream = WebService.myjur(context, logged.getLogin(), logged.getToken());
+                    inputStream = WebService.myjur(mainActivity, logged.getLogin(), logged.getToken());
 
                     if (inputStream != null) {
                         try {
@@ -212,19 +244,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             e.printStackTrace();
                         }
                         if (response != null && "MYJUR".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                            List<Jury> juries = (List) response.get("juries");
+                            myJuries = (List) response.get("juries");
                             projectsToEvaluate = new ArrayList<Project>();
-                            for(Jury jury : juries) {
-                                for(Project project : jury.getProjects()) {
+                            for (Jury jury : myJuries) {
+                                for (Project project : jury.getProjects()) {
                                     boolean present = false;
                                     int i = 0;
-                                    while(i < projectsToEvaluate.size() && !present) {
-                                        if(project.getId() == projectsToEvaluate.get(i).getId()) {
+                                    while (i < projectsToEvaluate.size() && !present) {
+                                        if (project.getId() == projectsToEvaluate.get(i).getId()) {
                                             present = true;
                                         }
                                         i++;
                                     }
-                                    if(!present) {
+                                    if (!present) {
                                         projectsToEvaluate.add(project);
                                     }
                                 }
@@ -245,10 +277,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         protected void onPostExecute(final Boolean success) {
             super.onPostExecute(success);
 
-            if(success) {
+            if (success) {
                 logged.setProjectsSupervised(projectsSupervised);
                 logged.setProjectsToEvaluate(projectsToEvaluate);
-            } else if(numberAttempts > 0) {
+                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                if (logged.getProjectsSupervised().isEmpty() && findItemByTitle(navigationView, "Mes Projets") != null) {
+                    findItemByTitle(navigationView, "Mes Projets").setVisible(false);
+                } else if (findItemByTitle(navigationView, "Mes Projets") != null) {
+                    findItemByTitle(navigationView, "Mes Projets").setVisible(true);
+                }
+                if (myJuries.isEmpty() && findItemByTitle(navigationView, "Mes Jurys") != null) {
+                    findItemByTitle(navigationView, "Mes Jurys").setVisible(false);
+                } else if (findItemByTitle(navigationView, "Mes Jurys") != null) {
+                    findItemByTitle(navigationView, "Mes Jurys").setVisible(true);
+                }
+            } else if (numberAttempts > 0) {
                 numberAttempts--;
                 this.execute();
             }

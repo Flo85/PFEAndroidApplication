@@ -53,12 +53,14 @@
             android:text="Ma note :"/>
         <EditText
             android:id="@+id/project_note_jury"
+            android:background="@drawable/edit_text_design"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:padding="2dp"
             android:layout_weight="1"
-            android:textColor="@color/colorPrimaryDark"/>
+            android:textColor="@color/colorPrimaryDark"
+            android:inputType="numberDecimal"/>
     </LinearLayout>
     <Button
         android:id="@+id/project_sauvegarde_note_jury"

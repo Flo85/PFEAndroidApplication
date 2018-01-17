@@ -1,34 +1,27 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ListProjects extends Fragment {
+public class ListProjectsJPO extends Fragment {
     private List<Project> projects;
-    private ListProjectsAdapter listProjectsAdapter;
+    private ListProjectsJPOAdapter listProjectsJPOAdapter;
 
-    public ListProjects () {
+    public ListProjectsJPO () {
 
     }
 
@@ -48,10 +41,10 @@ public class ListProjects extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        listProjectsAdapter = new ListProjectsAdapter(this);
-        recyclerView.setAdapter(listProjectsAdapter);
-        ListProjectsTask listProjectsTask = new ListProjectsTask();
-        listProjectsTask.execute();
+        listProjectsJPOAdapter = new ListProjectsJPOAdapter(this);
+        recyclerView.setAdapter(listProjectsJPOAdapter);
+        ListProjectsJPOTask listProjectsJPOTask = new ListProjectsJPOTask();
+        listProjectsJPOTask.execute();
     }
 
     public void clickProject(Project project) {
@@ -62,11 +55,11 @@ public class ListProjects extends Fragment {
         ((MainActivity) getActivity()).displayFragment(detailProject);
     }
 
-    private class ListProjectsTask extends AsyncTask<Void, Void, Void> {
+    private class ListProjectsJPOTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            InputStream inputStream = WebService.liprj(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
+            InputStream inputStream = WebService.porte(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
                     ((MainActivity) getActivity()).getLogged().getToken());
             HashMap<String, Object> response = null;
             if (inputStream != null) {
@@ -75,18 +68,18 @@ public class ListProjects extends Fragment {
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
-                if (response != null && "LIPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
+                if (response != null && "PORTE".equals(response.get("api")) && "OK".equals(response.get("result"))) {
                     projects = (List) response.get("projects");
                 }
             }
-            listProjectsAdapter.setProjects(projects);
+            listProjectsJPOAdapter.setProjects(projects);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            listProjectsAdapter.notifyDataSetChanged();
+            listProjectsJPOAdapter.notifyDataSetChanged();
         }
     }
 }

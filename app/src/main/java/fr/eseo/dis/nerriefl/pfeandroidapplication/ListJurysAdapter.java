@@ -1,6 +1,7 @@
 package fr.eseo.dis.nerriefl.pfeandroidapplication;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,8 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
 
     @Override
     public ListJurysAdapter.ListJurysViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View projectView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_jury, parent, false);
-        return new ListJurysAdapter.ListJurysViewHolder(projectView);
+        View juryView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_jury, parent, false);
+        return new ListJurysAdapter.ListJurysViewHolder(juryView);
     }
 
     @Override
@@ -33,11 +34,11 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
         final Jury jury = juries.get(position);
 
         holder.juryDate.setText(jury.getDate());
-        if(!jury.getMembers().isEmpty()){
+        if (!jury.getMembers().isEmpty()) {
             String members = "";
-            for(int i = 0; i < jury.getMembers().size(); i++){
+            for (int i = 0; i < jury.getMembers().size(); i++) {
                 members += jury.getMembers().get(i).getForeName() + " " + jury.getMembers().get(i).getSurName();
-                if(i < jury.getMembers().size() - 1){
+                if (i < jury.getMembers().size() - 1) {
                     members += ", ";
                 }
             }
@@ -46,12 +47,21 @@ public class ListJurysAdapter extends RecyclerView.Adapter<ListJurysAdapter.List
             holder.juryMembers.setText("Aucun membre");
         }
 
-        holder.view.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                listJurys.clickJury(jury);
-            }
-        });
+        if (jury.isMember(((MainActivity) listJurys.getActivity()).getLogged())) {
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listJurys.clickJury(jury);
+                }
+            });
+        } else {
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
     }
 
     @Override

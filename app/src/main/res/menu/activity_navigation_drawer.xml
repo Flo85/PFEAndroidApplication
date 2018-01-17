@@ -21,18 +21,9 @@
             android:icon="@drawable/ic_users"
             android:title="Jurys" />
         <item
-            android:id="@+id/nav_eleves"
-            android:icon="@drawable/ic_student"
-            android:title="Élèves" />
+            android:id="@+id/nav_projets_jpo"
+            android:icon="@drawable/ic_file"
+            android:title="Projets JPO" />
     </group>
-
-    <item android:title="">
-        <menu>
-            <item
-                android:id="@+id/nav_notifications"
-                android:icon="@drawable/ic_notification"
-                android:title="Notifications" />
-        </menu>
-    </item>
 
 </menu>

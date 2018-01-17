@@ -17,6 +17,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Propriétés</string>
+    <string name="action_disconnect">Se déconnecter</string>
     <string name="title_activity_list_projects">ListProjects</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

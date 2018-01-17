@@ -91,6 +91,17 @@ public class Jury implements Parcelable {
         projects.add(project);
     }
 
+    public boolean isMember(User user) {
+        int i = 0;
+        while(i < members.size()) {
+            if(members.get(i).getForeName().equals(user.getForeName()) && members.get(i).getSurName().equals(user.getSurName())) {
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);

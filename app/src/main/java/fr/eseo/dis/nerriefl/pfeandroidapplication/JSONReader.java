@@ -145,10 +145,10 @@ public class JSONReader {
             } else if(notation.get("mynote") instanceof Long) {
                 note.setMyNote(notation.getLong("mynote"));
             }
-            if(notation.get("avgnote") instanceof Double){
-                note.setMyNote(notation.getDouble("avgnote"));
-            } else if(notation.get("avgnote") instanceof Long) {
-                note.setMyNote(notation.getLong("avgnote"));
+            if(notation.get("avgNote") instanceof Double){
+                note.setAverageNote(notation.getDouble("avgNote"));
+            } else if(notation.get("avgNote") instanceof Long) {
+                note.setAverageNote(notation.getLong("avgNote"));
             }
 
             notes.add(note);

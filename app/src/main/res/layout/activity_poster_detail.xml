@@ -5,8 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fr.eseo.dis.nerriefl.pfeandroidapplication.DetailPoster">
-    <ImageView
-        android:id="@+id/poster_detail_image"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/poster_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

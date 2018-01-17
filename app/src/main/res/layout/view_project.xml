@@ -51,6 +51,16 @@
                 android:ellipsize="end"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="Étudiant 1, Étudiant 2"/>
+            <TextView
+                android:id="@+id/confidentiality"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:padding="2dp"
+                android:textColor="@color/colorPrimaryRedLight"
+                android:text="Confidentiel"
+                android:textAlignment="textEnd"
+                android:visibility="gone"/>
         </LinearLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

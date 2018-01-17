@@ -50,9 +50,10 @@
                         android:padding="2dp"
                         android:layout_weight="1"
                         android:textColor="@color/colorPrimaryDark"
-                        android:text="1"/>
+                        android:text="0"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/project_details_supervisor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -66,7 +67,7 @@
                         android:textColor="@color/colorPrimaryGrey"
                         android:text="Superviseur :"/>
                     <TextView
-                        android:id="@+id/project_details_supervisor"
+                        android:id="@+id/project_details_supervisor_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -76,6 +77,7 @@
                         android:text="M. Supervisor"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/project_details_students"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -88,7 +90,7 @@
                         android:textColor="@color/colorPrimaryGrey"
                         android:text="Étudiants :"/>
                     <TextView
-                        android:id="@+id/project_details_students"
+                        android:id="@+id/project_details_students_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
@@ -97,6 +99,12 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:text="Etudiant1, Etudiant 2, Etudiant 3"/>
                 </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/project_details_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                </android.support.v7.widget.RecyclerView>
                 <ImageView
                     android:id="@+id/thumb"
                     android:layout_width="wrap_content"
@@ -124,10 +132,6 @@
                     android:paddingTop="2dp"
                     android:minLines="3"
                     android:text="Bonjour voici la description du sujet"/>
-                <android.support.v7.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </android.support.v7.widget.RecyclerView>
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </ScrollView>

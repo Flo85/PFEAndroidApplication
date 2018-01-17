@@ -66,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        Log.d("Login", "Début de LoginActivity");
         // Set up the login form.
         userNameView = findViewById(R.id.user_name);
         // populateAutoComplete();
@@ -308,6 +307,8 @@ public class LoginActivity extends AppCompatActivity {
             this.context = context;
             this.userName = userName;
             this.password = password;
+            this.forename = "";
+            this.surname = "";
         }
 
         @Override
@@ -337,16 +338,14 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         if (response != null && "MYPRJ".equals(response.get("api")) && "OK".equals(response.get("result"))) {
                             List<Project> projects = (List) response.get("projects");
-                            forename = projects.get(0).getSupervisor().getForeName();
-                            surname = projects.get(0).getSupervisor().getSurName();
-
-                            return true;
+                            if (projects != null && !projects.isEmpty()) {
+                                forename = projects.get(0).getSupervisor().getForeName();
+                                surname = projects.get(0).getSupervisor().getSurName();
+                            }
                         }
-                        return false;
                     }
-                    return false;
+                    return true;
                 }
-                return false;
             }
             return false;
         }
