@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static List<Fragment> fragmentsPrevious = new ArrayList<Fragment>();
     private static Fragment fragmentActual = new Home();
 
-    private static final String JPO_LOGIN = "jpo";
+    public static final String JPO_LOGIN = "jpo";
 
     private User logged;
 

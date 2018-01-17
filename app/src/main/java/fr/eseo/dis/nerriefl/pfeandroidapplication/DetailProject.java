@@ -54,7 +54,8 @@ public class DetailProject extends Fragment {
         } else {
             view.findViewById(R.id.project_details_supervisor).setVisibility(View.GONE);
         }
-        if (project.getStudents() != null && !project.getStudents().isEmpty()) {
+        if (project.getStudents() != null && !project.getStudents().isEmpty()
+                && !MainActivity.JPO_LOGIN.equals(((MainActivity) getActivity()).getLogged().getLogin())) {
             String students = "";
             for (User student : project.getStudents()) {
                 if (!student.equals(project.getStudents().get(0))) {
@@ -64,8 +65,12 @@ public class DetailProject extends Fragment {
             }
             ((TextView) view.findViewById(R.id.project_details_students_content)).setText(students);
             view.findViewById(R.id.project_details_students).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.project_details_students_content).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.project_details_students_label).setVisibility(View.VISIBLE);
         } else {
             view.findViewById(R.id.project_details_students).setVisibility(View.GONE);
+            view.findViewById(R.id.project_details_students_content).setVisibility(View.GONE);
+            view.findViewById(R.id.project_details_students_label).setVisibility(View.GONE);
         }
         ((TextView) view.findViewById(R.id.project_details_description)).setText(project.getDescription());
 
