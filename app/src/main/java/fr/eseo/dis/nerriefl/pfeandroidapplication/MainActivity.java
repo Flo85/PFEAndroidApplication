@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TOKEN = "Token";
     private static final String FORENAME = "Forename";
     private static final String SURNAME = "Surname";
+    private static List<Fragment> fragmentsPrevious = new ArrayList<Fragment>();
     private static Fragment fragmentActual = new Home();
 
     private static final String JPO_LOGIN = "jpo";
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             logged.setForeName(getIntent().getExtras().getString(FORENAME));
             logged.setSurName(getIntent().getExtras().getString(SURNAME));
 
-            if(JPO_LOGIN.equals(logged.getLogin())){
+            if (JPO_LOGIN.equals(logged.getLogin())) {
                 ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText("Journée Portes Ouvertes");
                 ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText("");
                 navigationView.getHeaderView(0).findViewById(R.id.logged_email).setVisibility(View.GONE);
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 findItemByTitle(navigationView, "Mes Projets").setVisible(false);
                 findItemByTitle(navigationView, "Mes Jurys").setVisible(false);
                 findItemByTitle(navigationView, "Projets JPO").setVisible(true);
-            } else if("".equals(logged.getForeName()) && "".equals(logged.getSurName())){
+            } else if ("".equals(logged.getForeName()) && "".equals(logged.getSurName())) {
                 ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_name)).setText("");
                 navigationView.getHeaderView(0).findViewById(R.id.logged_name).setVisibility(View.GONE);
                 ((TextView) navigationView.getHeaderView(0).findViewById(R.id.logged_email)).setText("");
@@ -111,11 +112,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        } else if (!fragmentsPrevious.isEmpty()) {
+            displayFragment(fragmentsPrevious.get(fragmentsPrevious.size() - 1));
         }
     }
 
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_disconnect) {
             fragmentActual = new Home();
+            fragmentsPrevious = new ArrayList<>();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             return true;
@@ -175,6 +177,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void displayFragment(Fragment fragment) {
         if (fragment != null) {
+            if (!fragmentsPrevious.isEmpty() && fragmentsPrevious.get(fragmentsPrevious.size() - 1).equals(fragment)) {
+                fragmentsPrevious.remove(fragment);
+            } else {
+                fragmentsPrevious.add(fragmentActual);
+            }
+
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.content_frame, fragment);
             fragmentTransaction.commit();
@@ -182,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentActual = fragment;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 
@@ -193,10 +201,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    public MenuItem findItemByTitle(NavigationView navigationView, String title){
+    public MenuItem findItemByTitle(NavigationView navigationView, String title) {
         int i = 0;
-        while(i<navigationView.getMenu().size()){
-            if(navigationView.getMenu().getItem(i).getTitle().equals(title)){
+        while (i < navigationView.getMenu().size()) {
+            if (navigationView.getMenu().getItem(i).getTitle().equals(title)) {
                 return navigationView.getMenu().getItem(i);
             }
             i++;

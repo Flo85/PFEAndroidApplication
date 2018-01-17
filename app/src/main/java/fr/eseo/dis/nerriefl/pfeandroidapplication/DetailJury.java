@@ -55,7 +55,7 @@ public class DetailJury extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         detailJuryProjectsAdapter = new DetailJuryProjectsAdapter(this);
         recyclerView.setAdapter(detailJuryProjectsAdapter);
-        DetailJuryTask detailJuryTask = new DetailJuryTask();
+        DetailJuryTask detailJuryTask = new DetailJuryTask((MainActivity) getActivity());
         detailJuryTask.execute();
     }
 
@@ -68,11 +68,16 @@ public class DetailJury extends Fragment {
     }
 
     private class DetailJuryTask extends AsyncTask<Void, Void, Boolean> {
+        private final MainActivity mainActivity;
+
+        public DetailJuryTask(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            InputStream inputStream = WebService.jyinf(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                    jury.getId(), ((MainActivity) getActivity()).getLogged().getToken());
+            InputStream inputStream = WebService.jyinf(mainActivity, mainActivity.getLogged().getLogin(),
+                    jury.getId(), mainActivity.getLogged().getToken());
             HashMap<String, Object> response = null;
             if (inputStream != null) {
                 try {

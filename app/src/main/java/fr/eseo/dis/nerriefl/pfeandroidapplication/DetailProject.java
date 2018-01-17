@@ -104,42 +104,46 @@ public class DetailProject extends Fragment {
         noteStudentAdapter = new NoteStudentAdapter(this);
         recyclerView.setAdapter(noteStudentAdapter);
 
-        DetailProjectTaskPoster detailProjectTaskPoster = new DetailProjectTaskPoster(view);
+        DetailProjectTaskPoster detailProjectTaskPoster = new DetailProjectTaskPoster((MainActivity) getActivity(), view);
         detailProjectTaskPoster.execute();
-        DetailProjectTaskNotes detailProjectTaskNotes = new DetailProjectTaskNotes();
+        DetailProjectTaskNotes detailProjectTaskNotes = new DetailProjectTaskNotes((MainActivity) getActivity());
         detailProjectTaskNotes.execute();
     }
 
     private void clickPoster(Bitmap poster) {
-        DetailPoster detailPoster = new DetailPoster();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("poster", poster);
-        detailPoster.setArguments(bundle);
-        ((MainActivity) getActivity()).displayFragment(detailPoster);
+        if (poster != null) {
+            DetailPoster detailPoster = new DetailPoster();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("poster", poster);
+            detailPoster.setArguments(bundle);
+            ((MainActivity) getActivity()).displayFragment(detailPoster);
+        }
     }
 
     public void saveNote(User student, double note) {
-        DetailProjectTaskNotesEdit detailProjectTaskNotesEdit = new DetailProjectTaskNotesEdit(student, note);
+        DetailProjectTaskNotesEdit detailProjectTaskNotesEdit = new DetailProjectTaskNotesEdit((MainActivity) getActivity(), student, note);
         detailProjectTaskNotesEdit.execute();
     }
 
     public class DetailProjectTaskPoster extends AsyncTask<Void, Void, Boolean> {
+        private final MainActivity mainActivity;
         private final View view;
         private Bitmap thumb;
 
-        public DetailProjectTaskPoster(View view) {
+        public DetailProjectTaskPoster(MainActivity mainActivity, View view) {
+            this.mainActivity = mainActivity;
             this.view = view;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            if(project.getPoster() != null && !"".equals(project.getPoster())){
+            if (project.getPoster() != null && !"".equals(project.getPoster())) {
                 byte[] bytesImage = Base64.decode(project.getPoster(), Base64.DEFAULT);
                 thumb = BitmapFactory.decodeByteArray(bytesImage, 0, bytesImage.length);
                 return true;
             } else if (project.isPosterCommited()) {
-                InputStream inputStream = WebService.postr(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(), project.getId(),
-                        ((MainActivity) getActivity()).getLogged().getToken());
+                InputStream inputStream = WebService.postr(mainActivity, mainActivity.getLogged().getLogin(), project.getId(),
+                        mainActivity.getLogged().getToken());
                 if (inputStream != null) {
                     thumb = BitmapFactory.decodeStream(inputStream);
                     return true;
@@ -160,11 +164,16 @@ public class DetailProject extends Fragment {
     }
 
     public class DetailProjectTaskNotes extends AsyncTask<Void, Void, Boolean> {
+        private final MainActivity mainActivity;
+
+        public DetailProjectTaskNotes(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            InputStream inputStream = WebService.notes(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                    project.getId(), ((MainActivity) getActivity()).getLogged().getToken());
+            InputStream inputStream = WebService.notes(mainActivity, mainActivity.getLogged().getLogin(),
+                    project.getId(), mainActivity.getLogged().getToken());
             HashMap<String, Object> response = null;
             if (inputStream != null) {
                 try {
@@ -190,19 +199,20 @@ public class DetailProject extends Fragment {
     }
 
     public class DetailProjectTaskNotesEdit extends AsyncTask<Void, Void, Boolean> {
+        private final MainActivity mainActivity;
         private final double note;
         private final User etudiant;
 
-        public DetailProjectTaskNotesEdit(User etudiant, double note) {
+        public DetailProjectTaskNotesEdit(MainActivity mainActivity, User etudiant, double note) {
+            this.mainActivity = mainActivity;
             this.note = note;
             this.etudiant = etudiant;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            InputStream inputStream = WebService.newnt(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                    project.getId(), etudiant.getId(), note,
-                    ((MainActivity) getActivity()).getLogged().getToken());
+            InputStream inputStream = WebService.newnt(mainActivity, mainActivity.getLogged().getLogin(),
+                    project.getId(), etudiant.getId(), note, mainActivity.getLogged().getToken());
             HashMap<String, Object> response = null;
             if (inputStream != null) {
                 try {
@@ -211,8 +221,8 @@ public class DetailProject extends Fragment {
                     e.printStackTrace();
                 }
                 if (response != null && "NEWNT".equals(response.get("api")) && "OK".equals(response.get("result"))) {
-                    inputStream = WebService.notes(getContext(), ((MainActivity) getActivity()).getLogged().getLogin(),
-                            project.getId(), ((MainActivity) getActivity()).getLogged().getToken());
+                    inputStream = WebService.notes(mainActivity, mainActivity.getLogged().getLogin(),
+                            project.getId(), mainActivity.getLogged().getToken());
                     response = null;
                     if (inputStream != null) {
                         try {
